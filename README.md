@@ -200,11 +200,13 @@ If you use this code or results in your research, please cite:
 
 ## References
 
-- **FCIT Algorithm**: Ramsey, J. D., et al. (2017). "A million variables and more: the Fast Greedy Equivalence Search algorithm for learning high-dimensional graphical causal models." *International Journal of Data Science and Analytics*, 3, 121-129.
+- **FCIT Algorithm**: Desmond, H., & Ramsey, J. (2025). "The Causal Structure of Galactic Astrophysics." Version November 11, 2025. Institute of Cosmology & Gravitation, University of Portsmouth, Dennis Sciama Building, Portsmouth, PO1 3FX, UK; Carnegie Mellon University Philosophy Department.
 
-- **ALFALFA Survey**: Haynes, M. P., et al. (2018). "The Arecibo Legacy Fast ALFA Survey: The ALFALFA Extragalactic H I Source Catalog." *The Astrophysical Journal*, 861, 49.
+- **ALFALFA × NSA Matched Catalogue**: Stiskalek, R., Desmond, H., Holvey, T., & Jones, M. G. "The dependence of subhalo abundance matching on galaxy photometry and selection criteria." Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford OX1 3RH, UK; Fakultät für Physik, Ludwig-Maximilians-Universität München, 80333 München, Germany; School of Physics and Astronomy, University of Glasgow, Glasgow G12 8QQ, UK; Instituto de Astrofísica de Andalucía (IAA-CSIC), Glorieta de la Astronomía s/n, 18008, Granada, Spain; Steward Observatory, University of Arizona, 933 North Cherry Avenue, Rm. N204, Tucson, AZ 85721-0065, USA.
 
-- **NSA Catalogue**: Blanton, M. R., et al. (2011). "Improved Background Subtraction for the Sloan Digital Sky Survey Images." *The Astronomical Journal*, 142, 31.
+- **ALFALFA Survey**: Haynes, M. P., Giovanelli, R., Kent, B. R., Adams, E. A. K., Balonek, T. J., Craig, D. W., Fertig, D., Finn, R., Giovanardi, C., Hallenbeck, G., Hess, K. M., Hoffman, G. L., et al. "The Arecibo Legacy Fast ALFA Survey: The ALFALFA Extragalactic HI Source Catalog."
+
+- **NSA Catalogue**: Blanton, M. R., Kazin, E., Muna, D., Weaver, B. A., & Price-Whelan, A. (2011). "Improved Background Subtraction for the Sloan Digital Sky Survey Images." *The Astronomical Journal*, 142, 31. Center for Cosmology and Particle Physics, Department of Physics, New York University, 4 Washington Place, New York, NY 10003, USA.
 
 ## License
 
@@ -212,6 +214,8 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-For questions or collaboration inquiries, please open an issue on GitHub.
+For questions, collaboration inquiries, or data access requests, please contact:
+
+**Email**: vidit.patankar16@gmail.com
 
 **GitHub**: [@vidigoat](https://github.com/vidigoat)
