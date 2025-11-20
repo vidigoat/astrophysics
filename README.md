@@ -192,21 +192,21 @@ If you use this code or results in your research, please cite:
 ```bibtex
 @software{astrophysics_causal_discovery,
   title = {Causal Discovery in Galaxy Properties: ALFALFA × NSA vs. NSA-only},
-  author = {Vidigoat},
-  year = {2024},
+  author = {Patankar, Vidit},
+  year = {2025},
   url = {https://github.com/vidigoat/astrophysics}
 }
 ```
 
 ## References
 
-- **FCIT Algorithm**: Desmond, H., & Ramsey, J. (2025). "The Causal Structure of Galactic Astrophysics." Version November 11, 2025. Institute of Cosmology & Gravitation, University of Portsmouth, Dennis Sciama Building, Portsmouth, PO1 3FX, UK; Carnegie Mellon University Philosophy Department.
+- **FCIT Algorithm**: Desmond, H., & Ramsey, J. (2025). "The Causal Structure of Galactic Astrophysics." Version November 11, 2025.
 
-- **ALFALFA × NSA Matched Catalogue**: Stiskalek, R., Desmond, H., Holvey, T., & Jones, M. G. "The dependence of subhalo abundance matching on galaxy photometry and selection criteria." Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford OX1 3RH, UK; Fakultät für Physik, Ludwig-Maximilians-Universität München, 80333 München, Germany; School of Physics and Astronomy, University of Glasgow, Glasgow G12 8QQ, UK; Instituto de Astrofísica de Andalucía (IAA-CSIC), Glorieta de la Astronomía s/n, 18008, Granada, Spain; Steward Observatory, University of Arizona, 933 North Cherry Avenue, Rm. N204, Tucson, AZ 85721-0065, USA.
+- **ALFALFA × NSA Matched Catalogue**: Stiskalek, R., Desmond, H., Holvey, T., & Jones, M. G. "The dependence of subhalo abundance matching on galaxy photometry and selection criteria."
 
-- **ALFALFA Survey**: Haynes, M. P., Giovanelli, R., Kent, B. R., Adams, E. A. K., Balonek, T. J., Craig, D. W., Fertig, D., Finn, R., Giovanardi, C., Hallenbeck, G., Hess, K. M., Hoffman, G. L., et al. "The Arecibo Legacy Fast ALFA Survey: The ALFALFA Extragalactic HI Source Catalog."
+- **ALFALFA Survey**: Haynes, M. P., Giovanelli, R., Kent, B. R., et al. "The Arecibo Legacy Fast ALFA Survey: The ALFALFA Extragalactic HI Source Catalog."
 
-- **NSA Catalogue**: Blanton, M. R., Kazin, E., Muna, D., Weaver, B. A., & Price-Whelan, A. (2011). "Improved Background Subtraction for the Sloan Digital Sky Survey Images." *The Astronomical Journal*, 142, 31. Center for Cosmology and Particle Physics, Department of Physics, New York University, 4 Washington Place, New York, NY 10003, USA.
+- **NSA Catalogue**: Blanton, M. R., Kazin, E., Muna, D., Weaver, B. A., & Price-Whelan, A. (2011). "Improved Background Subtraction for the Sloan Digital Sky Survey Images." *The Astronomical Journal*, 142, 31.
 
 ## License
 
