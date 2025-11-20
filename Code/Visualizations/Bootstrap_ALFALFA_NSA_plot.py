@@ -23,9 +23,8 @@ EDGE_LABELS = {
 df = pd.read_csv(CSV_PATH)
 df["label"] = df["edge"].map(EDGE_LABELS).fillna(df["edge"])
 
-# Only show edges that appear in bootstrap results (≥80% threshold)
-# Edges below threshold are not shown to avoid confusion
-
+# Filter to only show edges with ≥80% bootstrap recovery
+df = df[df["percentage"] >= 80.0]
 df = df.sort_values("percentage", ascending=False).reset_index(drop=True)
 
 sns.set_style("whitegrid")
@@ -88,5 +87,3 @@ plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
 plt.close()
-
-print(f"Saved: {OUTPUT_PATH}")

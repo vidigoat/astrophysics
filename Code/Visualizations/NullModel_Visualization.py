@@ -142,21 +142,6 @@ def create_combined_plot():
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     
     plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
-    print(f"[OK] Saved null model validation plot to {OUTPUT_PATH}")
-    
-    # Print summary
-    print("\n" + "="*60)
-    print("NULL MODEL VALIDATION SUMMARY")
-    print("="*60)
-    print(f"\nALFALFA × NSA:")
-    print(f"  Real edges:     {alfalfa_real}")
-    print(f"  Null mean:      {alfalfa_null_mean:.2f} ± {alfalfa_null_std:.2f}")
-    print(f"  Difference:     {diff:.1f} edges")
-    print(f"\nNSA-only:")
-    print(f"  Real edges:     {nsa_real}")
-    print(f"  Null mean:      {nsa_null_mean:.2f} ± {nsa_null_std:.2f}")
-    print(f"  Difference:     {nsa_diff:.1f} edges")
-    print("="*60)
 
 if __name__ == "__main__":
     create_combined_plot()

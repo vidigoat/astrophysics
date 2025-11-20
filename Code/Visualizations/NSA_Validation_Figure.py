@@ -89,5 +89,3 @@ plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
 plt.close()
-
-print(f"Saved: {OUTPUT_PATH}")

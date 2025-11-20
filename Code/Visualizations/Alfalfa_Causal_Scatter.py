@@ -12,7 +12,7 @@ import matplotlib.patheffects as path_effects
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ScatterPlots", "alfalfa_causal_scatter.png")
-DATA_PATH = os.path.join(REPO_ROOT, "Data", "alfalfa_nsa_final_12props.pkl")
+DATA_PATH = os.path.join(REPO_ROOT, "Data", "alfalfa_nsa_final_13props.pkl")
 
 # All 7 edges from FCIT output
 EDGE_CONFIG = [
@@ -97,15 +97,14 @@ def plot_edge(ax, x, y, title, edge_type, cmap):
 
 
 def main() -> None:
-    print("=== ALFALFA × NSA: Causal Scatter Grid (All 6 Edges) ===")
     data_dict = load_data(DATA_PATH)
-    print(f"Loaded dataset with {len(next(iter(data_dict.values()))):,} galaxies.")
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 
     sns.set_style("ticks")
     plt.rcParams.update({"font.size": 11, "axes.titlesize": 13, "axes.labelsize": 11, "legend.fontsize": 10})
 
+    # Create grid for 7 edges (3x3 grid, hide 2)
     fig, axes = plt.subplots(3, 3, figsize=(15, 15))
     axes = axes.flatten()
 
@@ -116,13 +115,12 @@ def main() -> None:
         ax.set_xlabel(x_var.replace("_", " "), fontweight="bold", fontsize=10)
         ax.set_ylabel(y_var.replace("_", " "), fontweight="bold", fontsize=10)
 
-    # Hide unused subplots
+    # Hide unused subplots (7 edges, so hide last 2)
     for idx in range(len(EDGE_CONFIG), len(axes)):
         axes[idx].axis("off")
 
     plt.tight_layout(rect=[0, 0, 1, 1], pad=2.0)
     plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
-    print(f"[OK] Saved scatter grid to {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

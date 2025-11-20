@@ -1,6 +1,5 @@
 """
-Generate 9 additional publication-style scatter plots for remaining NSA-only causal edges.
-This is Part 2 of the NSA scatter plots (edges 10-18).
+Generate 9 publication-style scatter plots for best NSA-only causal edges (excluding ZDIST selection effects).
 """
 import os
 import pickle
@@ -12,32 +11,32 @@ from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.patheffects as path_effects
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ScatterPlots", "nsa_causal_scatter_part2.png")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ScatterPlots", "nsa_causal_scatter.png")
 DATA_PATH = os.path.join(REPO_ROOT, "Data", "nsa_final_10props.pkl")
 
-# Remaining 9 edges (edges 10-18 from the 18 total edges)
+# 9 best edges excluding ZDIST (selection effects) - focusing on most physically meaningful
 EDGE_CONFIG = [
-    ("ELPETRO_BA", "ELPETRO_TH50_R", "Axis Ratio → Size", "partial"),
-    ("ELPETRO_METS", "COLOR_U_R", "Metallicity o-o Color", "undirected"),
-    ("ELPETRO_B300", "ELPETRO_METS", "Star Formation o-o Metallicity", "undirected"),
-    ("ELPETRO_B300", "ELPETRO_MTOL", "Star Formation o-o Mass-to-Light", "undirected"),
-    ("ELPETRO_METS", "ELPETRO_MTOL", "Metallicity o-o Mass-to-Light", "undirected"),
-    ("ELPETRO_MTOL", "SERSIC_N", "Mass-to-Light o-o Sersic N", "undirected"),
-    ("SERSIC_N", "ELPETRO_TH50_R", "Sersic N → Size", "partial"),
-    ("ZDIST", "ELPETRO_ABSMAG_R", "Redshift → Abs. Mag (r)", "partial"),
-    ("ZDIST", "ELPETRO_TH50_R", "Redshift → Size", "partial"),
+    ("COLOR_U_R", "ELPETRO_ABSMAG_R", "Color → Abs. Mag (r)", "directed"),
+    ("ELPETRO_ABSMAG_R", "ELPETRO_MASS", "Abs. Mag (r) → Stellar Mass", "directed"),
+    ("ELPETRO_MTOL", "ELPETRO_MASS", "Mass-to-Light → Stellar Mass", "partial"),
+    ("ELPETRO_MTOL", "COLOR_U_R", "Mass-to-Light o-o Color", "undirected"),
+    ("ELPETRO_METS", "ELPETRO_ABSMAG_R", "Metallicity → Abs. Mag (r)", "directed"),
+    ("COLOR_U_R", "ELPETRO_B300", "Color o-o Star Formation", "undirected"),
+    ("SERSIC_N", "ELPETRO_ABSMAG_R", "Sersic N → Abs. Mag (r)", "directed"),
+    ("ELPETRO_BA", "ELPETRO_ABSMAG_R", "Axis Ratio → Abs. Mag (r)", "partial"),
+    ("ELPETRO_TH50_R", "ELPETRO_ABSMAG_R", "Size → Abs. Mag (r)", "partial"),
 ]
 
 COLORSETS = [
-    (["#1a1a2e", "#16213e", "#0f3460", "#533483", "#e94560"], "Midnight"),
-    (["#2d3436", "#636e72", "#74b9ff", "#0984e3", "#00b894"], "Turquoise"),
-    (["#3d1e6d", "#4a2c7a", "#5d3a87", "#6e4a94", "#7f5aa1"], "Royal Purple"),
-    (["#0c0c0c", "#1a1a1a", "#2d2d2d", "#404040", "#5a5a5a"], "Charcoal"),
-    (["#1e3a5f", "#2a4a6f", "#365a7f", "#426a8f", "#4e7a9f"], "Navy"),
-    (["#4a148c", "#6a1b9a", "#8e24aa", "#ab47bc", "#ce93d8"], "Violet"),
-    (["#1b5e20", "#2e7d32", "#388e3c", "#43a047", "#66bb6a"], "Emerald"),
-    (["#b71c1c", "#c62828", "#d32f2f", "#e53935", "#ef5350"], "Crimson"),
-    (["#e65100", "#ef6c00", "#f57c00", "#fb8c00", "#ff9800"], "Amber"),
+    (["#03071e", "#370617", "#6a040f", "#9d0208", "#d00000", "#f48c06", "#ffba08"], "Inferno Red"),
+    (["#0b132b", "#1c2541", "#3a506b", "#5bc0be", "#6fffe9"], "Deep Ocean"),
+    (["#2f323a", "#33658a", "#86bbd8", "#f6ae2d", "#f26419"], "Sunrise"),
+    (["#231942", "#5e548e", "#9f86c0", "#be95c4", "#e0b1cb"], "Mauve"),
+    (["#03045e", "#023e8a", "#0077b6", "#0096c7", "#00b4d8", "#48cae4"], "Azure"),
+    (["#1b4332", "#2d6a4f", "#40916c", "#52b788", "#74c69d", "#95d5b2"], "Forest"),
+    (["#132a13", "#31572c", "#4f772d", "#90a955", "#b5c99a"], "Moss"),
+    (["#590d22", "#800f2f", "#a4133c", "#c9184a", "#ff758f"], "Raspberry"),
+    (["#10002b", "#240046", "#3c096c", "#5a189a", "#7b2cbf", "#9d4edd"], "Iris"),
 ]
 
 
@@ -114,9 +113,7 @@ def plot_edge(ax, x, y, title, edge_type, cmap):
 
 
 def main() -> None:
-    print("=== NSA-only: Causal Scatter Grid Part 2 (Edges 10-18, 40k particles) ===")
     data_dict = load_data(DATA_PATH)
-    print(f"Loaded dataset with {len(next(iter(data_dict.values()))):,} galaxies.")
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 
@@ -135,9 +132,7 @@ def main() -> None:
 
     plt.tight_layout(rect=[0, 0, 1, 1], pad=2.0)
     plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
-    print(f"[OK] Saved scatter grid to {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
     main()
-
