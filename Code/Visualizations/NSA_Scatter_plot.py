@@ -120,7 +120,8 @@ def main() -> None:
     sns.set_style("ticks")
     plt.rcParams.update({"font.size": 10, "axes.titlesize": 12, "axes.labelsize": 10, "legend.fontsize": 9})
 
-    fig, axes = plt.subplots(3, 3, figsize=(15, 15))
+    # Create grid for 9 edges (3 rows x 4 columns, hide 3)
+    fig, axes = plt.subplots(3, 4, figsize=(20, 15))
     axes = axes.flatten()
 
     for idx, (x_var, y_var, title, edge_type) in enumerate(EDGE_CONFIG):
@@ -129,6 +130,10 @@ def main() -> None:
         plot_edge(ax, data_dict[x_var], data_dict[y_var], title, edge_type, cmap)
         ax.set_xlabel(x_var.replace("_", " "), fontweight="bold", fontsize=9)
         ax.set_ylabel(y_var.replace("_", " "), fontweight="bold", fontsize=9)
+
+    # Hide unused subplots (9 edges, so hide last 3)
+    for idx in range(len(EDGE_CONFIG), len(axes)):
+        axes[idx].axis("off")
 
     plt.tight_layout(rect=[0, 0, 1, 1], pad=2.0)
     plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
