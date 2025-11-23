@@ -12,7 +12,7 @@ from matplotlib.ticker import MaxNLocator
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 ALFALFA_NULL_PATH = os.path.join(REPO_ROOT, "Results", "null_model_test.pkl")
 NSA_NULL_PATH = os.path.join(REPO_ROOT, "Results", "nsa_null_model_test.pkl")
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "NullPlots", "null_model_validation.png")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "null_model_validation.png")
 
 def load_null_results(path):
     """Load null model test results from pickle file."""

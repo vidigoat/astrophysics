@@ -11,6 +11,8 @@ import pandas as pd
 import pytetrad.tools.TetradSearch as ts
 
 graphviz_bin = os.environ.get('GRAPHVIZ_BIN')
+if not graphviz_bin:
+    graphviz_bin = r'C:\Users\sanji\Downloads\Graphviz-14.0.2-win64\bin'
 if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 

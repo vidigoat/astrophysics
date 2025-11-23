@@ -8,7 +8,7 @@ from matplotlib.patches import Patch
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 CSV_PATH = os.path.join(REPO_ROOT, "Results", "nsa_bootstrap_validation.csv")
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "BootstrapPlots", "nsa_bootstrap_validation.png")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "nsa_bootstrap_validation.png")
 
 EDGE_LABELS = {
     "COLOR_U_R --> ELPETRO_ABSMAG_R": "Color →\nAbs. Mag (r)",

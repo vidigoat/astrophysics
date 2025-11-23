@@ -8,7 +8,7 @@ from matplotlib.patches import Patch
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 CSV_PATH = os.path.join(REPO_ROOT, "Results", "bootstrap_validation.csv")
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "BootstrapPlots", "alfalfa_bootstrap_validation.png")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "alfalfa_bootstrap_validation.png")
 
 EDGE_LABELS = {
     "ELPETRO_ABSMAG_R o-o ELPETRO_MASS": "Abs. Mag (r) ↔\nStellar Mass",

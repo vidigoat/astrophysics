@@ -104,8 +104,8 @@ def main() -> None:
     sns.set_style("ticks")
     plt.rcParams.update({"font.size": 11, "axes.titlesize": 13, "axes.labelsize": 11, "legend.fontsize": 10})
 
-    # Create grid for 7 edges (2 rows x 4 columns, hide 1)
-    fig, axes = plt.subplots(2, 4, figsize=(20, 10))
+    # Create grid for 7 edges (3x3 grid, hide 2)
+    fig, axes = plt.subplots(3, 3, figsize=(15, 15))
     axes = axes.flatten()
 
     for idx, (x_var, y_var, title, edge_type) in enumerate(EDGE_CONFIG):
@@ -115,7 +115,7 @@ def main() -> None:
         ax.set_xlabel(x_var.replace("_", " "), fontweight="bold", fontsize=10)
         ax.set_ylabel(y_var.replace("_", " "), fontweight="bold", fontsize=10)
 
-    # Hide unused subplots (7 edges, so hide last 1)
+    # Hide unused subplots (7 edges, so hide last 2)
     for idx in range(len(EDGE_CONFIG), len(axes)):
         axes[idx].axis("off")
 

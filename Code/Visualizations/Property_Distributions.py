@@ -14,7 +14,7 @@ from astropy.io import fits
 
 # Set up paths
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-OUTPUT_DIR = os.path.join(REPO_ROOT, 'Plots')
+OUTPUT_DIR = os.path.join(REPO_ROOT, 'Plots', 'PropertyDistributions')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Get FITS file path

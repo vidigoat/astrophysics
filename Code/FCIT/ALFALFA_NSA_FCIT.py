@@ -12,7 +12,9 @@ import pickle
 import os
 
 graphviz_bin = os.environ.get('GRAPHVIZ_BIN')
-if graphviz_bin:
+if not graphviz_bin:
+    graphviz_bin = r'C:\Users\sanji\Downloads\Graphviz-14.0.2-win64\bin'
+if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 
 PVAL_THRESHOLD = 0.01
@@ -57,6 +59,11 @@ png_path = graph_viz.render(
     format="png",
     cleanup=True,
 )
+if png_path and os.path.exists(png_path):
+    final_png = os.path.join(viz_dir, f"{base_name}.png")
+    if png_path != final_png:
+        import shutil
+        shutil.move(png_path, final_png)
 
 graph_text_file = os.path.join(results_dir, f"fcit_final_13props_t{TRUNC_LIM}_p{PENALTY_DISCOUNT}.txt")
 with open(graph_text_file, 'w', encoding='utf-8') as f:
