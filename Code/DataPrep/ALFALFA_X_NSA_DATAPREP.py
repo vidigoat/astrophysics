@@ -53,8 +53,11 @@ elpetro_absmag_r = elpetro_absmag[:, 4]
 M_HI = 10 ** logMH
 baryonic_mass = elpetro_mass + 1.4 * M_HI
 
+log_baryonic_mass = np.log10(np.maximum(baryonic_mass, 1e-10))
+log_stellar_mass = np.log10(np.maximum(elpetro_mass, 1e-10))
+
 data_dict = {
-    'BARYONIC_MASS': baryonic_mass,
+    'BARYONIC_MASS': log_baryonic_mass,
     'COLOR_U_R': color_u_r,
     'ELPETRO_B300': elpetro_b300,
     'SERSIC_N': sersic_n,
@@ -64,7 +67,7 @@ data_dict = {
     'ELPETRO_TH50_R': elpetro_th50_r,
     'ZDIST': zdist,
     'logMH': logMH,
-    'ELPETRO_MASS': elpetro_mass,
+    'ELPETRO_MASS': log_stellar_mass,
     'ELPETRO_ABSMAG_R': elpetro_absmag_r,
     'W50': w50
 }
@@ -80,7 +83,7 @@ for key in data_dict:
 n_before_cuts = len(data_dict['ELPETRO_MASS'])
 cut_mask = np.ones(n_before_cuts, dtype=bool)
 
-cut = (data_dict['BARYONIC_MASS'] > 1e6) & (data_dict['BARYONIC_MASS'] < 1e12)
+cut = (data_dict['BARYONIC_MASS'] > 6.0) & (data_dict['BARYONIC_MASS'] < 12.0)
 cut_mask &= cut
 
 cut = (data_dict['COLOR_U_R'] >= -0.5) & (data_dict['COLOR_U_R'] <= 4.0)
@@ -110,7 +113,7 @@ cut_mask &= cut
 cut = (data_dict['logMH'] >= 6.0) & (data_dict['logMH'] <= 10.5)
 cut_mask &= cut
 
-cut = (data_dict['ELPETRO_MASS'] > 1e6) & (data_dict['ELPETRO_MASS'] < 1e12)
+cut = (data_dict['ELPETRO_MASS'] > 6.0) & (data_dict['ELPETRO_MASS'] < 12.0)
 cut_mask &= cut
 
 cut = (data_dict['ELPETRO_ABSMAG_R'] > -25.0) & (data_dict['ELPETRO_ABSMAG_R'] < -10.0)

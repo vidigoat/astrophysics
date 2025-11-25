@@ -53,6 +53,8 @@ def main():
     color_u_r = elpetro_absmag[:, 2] - elpetro_absmag[:, 4]
     elpetro_absmag_r = elpetro_absmag[:, 4]
 
+    log_stellar_mass = np.log10(np.maximum(elpetro_mass, 1e-10))
+
     data_dict = {
         "COLOR_U_R": color_u_r,
         "ELPETRO_B300": elpetro_b300,
@@ -62,7 +64,7 @@ def main():
         "ELPETRO_BA": elpetro_ba,
         "ELPETRO_TH50_R": elpetro_th50_r,
         "ZDIST": zdist,
-        "ELPETRO_MASS": elpetro_mass,
+        "ELPETRO_MASS": log_stellar_mass,
         "ELPETRO_ABSMAG_R": elpetro_absmag_r,
     }
 
@@ -105,7 +107,7 @@ def main():
     cut = data_dict['ZDIST'] < 0.15
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_MASS'] > 1e6) & (data_dict['ELPETRO_MASS'] < 1e12)
+    cut = (data_dict['ELPETRO_MASS'] > 6.0) & (data_dict['ELPETRO_MASS'] < 12.0)
     cut_mask &= cut
 
     cut = (data_dict['ELPETRO_ABSMAG_R'] > -25.0) & (data_dict['ELPETRO_ABSMAG_R'] < -10.0)
