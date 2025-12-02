@@ -18,8 +18,8 @@ if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 
 PVAL_THRESHOLD = 0.01
-TRUNC_LIM = 14
-PENALTY_DISCOUNT = 50
+TRUNC_LIM = 7  # Optimized from mock data analysis
+PENALTY_DISCOUNT = 35  # Optimized from mock data analysis
 
 repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 data_path = os.path.join(repo_root, 'Data', 'alfalfa_nsa_final_13props.pkl')
@@ -51,7 +51,7 @@ num_edges = len([line for line in edge_lines if any(arrow in line for arrow in [
 
 gdot = search.get_dot()
 graph_viz = gviz.Source(gdot)
-base_name = f"fcit_final_13props_t{TRUNC_LIM}_p{PENALTY_DISCOUNT}"
+base_name = f"alfalfa_nsa_fcit_t{TRUNC_LIM}_p{PENALTY_DISCOUNT}"
 
 png_path = graph_viz.render(
     filename=base_name,
@@ -65,12 +65,12 @@ if png_path and os.path.exists(png_path):
         import shutil
         shutil.move(png_path, final_png)
 
-graph_text_file = os.path.join(results_dir, f"fcit_final_13props_t{TRUNC_LIM}_p{PENALTY_DISCOUNT}.txt")
+graph_text_file = os.path.join(results_dir, f"alfalfa_nsa_fcit_t{TRUNC_LIM}_p{PENALTY_DISCOUNT}.txt")
 with open(graph_text_file, 'w', encoding='utf-8') as f:
-    f.write("FCIT Causal Graph - Final 13 Properties\n")
+    f.write("FCIT Causal Graph – ALFALFA × NSA Dataset\n")
     f.write("="*70 + "\n")
     f.write(f"Dataset: ALFALFA x NSA\n")
-    f.write(f"Galaxies: {data.shape[0]}\n\n")
+    f.write(f"Galaxies: {data.shape[0]:,}\n\n")
     f.write(f"Parameters:\n")
     f.write(f"  Truncation limit:  {TRUNC_LIM}\n")
     f.write(f"  Penalty discount:  {PENALTY_DISCOUNT}\n")
@@ -81,3 +81,6 @@ with open(graph_text_file, 'w', encoding='utf-8') as f:
         f.write(f"  {i:2d}. {var}\n")
     f.write("\n" + "="*70 + "\n\n")
     f.write(str(graph))
+
+print(f"Results saved to: {graph_text_file}")
+print(f"Graph visualization saved to: {os.path.join(viz_dir, f'{base_name}.png')}")

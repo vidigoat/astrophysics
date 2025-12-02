@@ -1,5 +1,5 @@
 """
-Bootstrap validation for ALFALFA × NSA dataset.
+Bootstrap validation for Illustris TNG50 simulation dataset.
 Tests robustness of discovered causal edges across random subsamples.
 """
 
@@ -9,7 +9,7 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-import pytetrad.tools.TetradSearch as ts
+from pytetrad.tools import TetradSearch as ts
 
 graphviz_bin = os.environ.get('GRAPHVIZ_BIN')
 if not graphviz_bin:
@@ -18,15 +18,15 @@ if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 
 PVAL_THRESHOLD = 0.01
-TRUNC_LIMIT = 7
-PENALTY_DISCOUNT = 35
+TRUNCATION_LIMIT = 7  # Optimized hyperparameters
+PENALTY_DISCOUNT = 15  # Optimized hyperparameters
 N_BOOTSTRAP = 50
 SAMPLE_FRACTION = 0.8
 RANDOM_SEED = 42
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-DATA_PATH = os.path.join(REPO_ROOT, "Data", "alfalfa_nsa_final_13props.pkl")
-RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "bootstrap_validation.csv")
+DATA_PATH = os.path.join(REPO_ROOT, "Data", "tng50_final.pkl")
+RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "tng50_bootstrap_validation.csv")
 
 with open(DATA_PATH, "rb") as f:
     data_dict = pickle.load(f)
@@ -54,8 +54,8 @@ for i in range(N_BOOTSTRAP):
 
     search = ts.TetradSearch(df_sample)
     search.set_verbose(False)
-    search.use_basis_function_lrt(truncation_limit=TRUNC_LIMIT, alpha=PVAL_THRESHOLD)
-    search.use_basis_function_bic(truncation_limit=TRUNC_LIMIT, penalty_discount=PENALTY_DISCOUNT)
+    search.use_basis_function_lrt(truncation_limit=TRUNCATION_LIMIT, alpha=PVAL_THRESHOLD)
+    search.use_basis_function_bic(truncation_limit=TRUNCATION_LIMIT, penalty_discount=PENALTY_DISCOUNT)
     search.run_fcit()
 
     graph_str = str(search.get_java())
@@ -83,3 +83,4 @@ results_df = pd.DataFrame(
     [{"edge": edge, "count": count, "percentage": count / N_BOOTSTRAP * 100} for edge, count in sorted_edges]
 )
 results_df.to_csv(RESULTS_PATH, index=False)
+

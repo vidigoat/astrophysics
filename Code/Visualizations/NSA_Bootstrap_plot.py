@@ -1,4 +1,4 @@
-"""Bootstrap validation figure for ALFALFA × NSA dataset - Horizontal bar layout."""
+"""Bootstrap validation figure for NSA dataset - Horizontal bar layout."""
 import os
 import sys
 import numpy as np
@@ -12,9 +12,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 from bootstrap_plot_utils import parse_fcit_results, get_edge_display_label
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-CSV_PATH = os.path.join(REPO_ROOT, "Results", "bootstrap_validation.csv")
-FCIT_RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "alfalfa_nsa_fcit_t7_p35.txt")
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "alfalfa_bootstrap_validation.png")
+CSV_PATH = os.path.join(REPO_ROOT, "Results", "nsa_bootstrap_validation.csv")
+FCIT_RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "nsa_fcit_t14_p50.txt")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "nsa_bootstrap_validation.png")
 
 # Get all edges from main FCIT run (normalized to match bootstrap format)
 main_run_edges = parse_fcit_results(FCIT_RESULTS_PATH)
@@ -50,7 +50,7 @@ plt.rcParams.update({
 })
 
 # Create horizontal bar chart
-fig, ax = plt.subplots(figsize=(11, max(6, len(df) * 0.45)))
+fig, ax = plt.subplots(figsize=(11, max(6.5, len(df) * 0.4)))
 
 y_pos = np.arange(len(df))
 pct = df["percentage"].tolist()
@@ -95,3 +95,4 @@ plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
 plt.close()
+

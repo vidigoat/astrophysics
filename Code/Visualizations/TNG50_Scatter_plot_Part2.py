@@ -1,5 +1,5 @@
 """
-Generate publication-style scatter plots for NSA-only causal edges (Part 1).
+Generate publication-style scatter plots for TNG50 causal edges (Part 2).
 """
 import os
 import pickle
@@ -11,63 +11,57 @@ from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.patheffects as path_effects
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ScatterPlots", "nsa_causal_scatter.png")
-DATA_PATH = os.path.join(REPO_ROOT, "Data", "nsa_final_10props.pkl")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ScatterPlots", "tng50_causal_scatter_part2.png")
+DATA_PATH = os.path.join(REPO_ROOT, "Data", "tng50_final.pkl")
 
 EDGE_CONFIG = [
-    ("COLOR_U_R", "ELPETRO_ABSMAG_R", "Color → Abs. Mag (r)", "directed"),
-    ("ELPETRO_ABSMAG_R", "ELPETRO_MASS", "Abs. Mag (r) → Stellar Mass", "directed"),
-    ("ELPETRO_MTOL", "ELPETRO_MASS", "Mass-to-Light → Stellar Mass", "partial"),
-    ("ELPETRO_MTOL", "COLOR_U_R", "Mass-to-Light o-o Color", "undirected"),
-    ("ELPETRO_METS", "ELPETRO_ABSMAG_R", "Metallicity → Abs. Mag (r)", "directed"),
-    ("COLOR_U_R", "ELPETRO_B300", "Color o-o Star Formation", "undirected"),
-    ("SERSIC_N", "ELPETRO_ABSMAG_R", "Sersic N → Abs. Mag (r)", "directed"),
-    ("ELPETRO_BA", "ELPETRO_ABSMAG_R", "Axis Ratio → Abs. Mag (r)", "partial"),
-    ("ELPETRO_TH50_R", "ELPETRO_ABSMAG_R", "Size → Abs. Mag (r)", "partial"),
+    ("STAR_METALLICITY", "GAS_METALLICITY", "Stellar Metallicity o-o Gas Metallicity", "undirected"),
+    ("STELLAR_MASS", "BARYONIC_MASS", "Stellar Mass o-o Baryonic Mass", "undirected"),
+    ("STELLAR_MASS", "HALFMASS_RAD", "Stellar Mass o-o Half-mass Radius", "undirected"),
+    ("VEL_DISP", "BH_MASS", "Velocity Dispersion → Black Hole Mass", "directed"),
+    ("VEL_DISP", "VMAX", "Velocity Dispersion → Vmax", "directed"),
 ]
 
 LABEL_MAP = {
+    "DM_MASS": "Dark Matter Mass",
+    "STELLAR_MASS": "Stellar Mass",
+    "GAS_MASS": "Gas Mass",
+    "BH_MASS": "Black Hole Mass",
     "BARYONIC_MASS": "Baryonic Mass",
-    "ELPETRO_MASS": "Stellar Mass",
-    "COLOR_U_R": "Colour",
-    "ELPETRO_B300": "Star Formation",
-    "ELPETRO_ABSMAG_R": "Absolute Magnitude",
-    "ELPETRO_MTOL": "Mass-to-Light Ratio",
-    "logMH": "HI Mass",
-    "ZDIST": "Redshift",
-    "ELPETRO_METS": "Metallicity",
-    "ELPETRO_BA": "Axis Ratio",
-    "ELPETRO_TH50_R": "Half-light Radius",
-    "SERSIC_N": "Sersic n",
-    "W50": r"$W_{50}$",
+    "HALFMASS_RAD": "Half-mass Radius",
+    "VEL_DISP": "Velocity Dispersion",
+    "VMAX": "Vmax",
+    "GAS_METALLICITY": "Gas Metallicity",
+    "STAR_METALLICITY": "Stellar Metallicity",
+    "PHOTOMETRIC_U": "Photometric U",
+    "PHOTOMETRIC_R": "Photometric R",
+    "SFR": "Star Formation Rate",
+    "COLOUR": "Colour",
 }
 
 AXIS_LIMITS = {
-    "BARYONIC_MASS": (6.0, 12.0),
-    "ELPETRO_MASS": (6.0, 12.0),
-    "COLOR_U_R": (-0.5, 4.0),
-    "ELPETRO_B300": (0.0, 10.0),
-    "ELPETRO_ABSMAG_R": (-25.0, -10.0),
-    "ELPETRO_MTOL": (0.1, 10.0),
-    "logMH": (6.0, 10.5),
-    "ZDIST": (0.0, 0.15),
-    "ELPETRO_METS": (-2.5, 0.5),
-    "ELPETRO_BA": (0.0, 1.0),
-    "ELPETRO_TH50_R": (0.0, 25.0),
-    "SERSIC_N": (0.0, 6.0),
-    "W50": (20.0, 500.0),
+    "DM_MASS": (5.0, 13.0),
+    "STELLAR_MASS": (6.0, 14.0),
+    "GAS_MASS": (6.5, 11.5),
+    "BH_MASS": (0.0, 12.0),
+    "BARYONIC_MASS": (7.0, 13.0),
+    "HALFMASS_RAD": (-1.5, 2.5),
+    "VEL_DISP": (2.0, 300.0),
+    "VMAX": (5.0, 500.0),
+    "GAS_METALLICITY": (0.0, 0.15),
+    "STAR_METALLICITY": (0.0005, 0.15),
+    "PHOTOMETRIC_U": (-26.0, -9.0),
+    "PHOTOMETRIC_R": (-27.0, -9.0),
+    "SFR": (-3.0, 2.5),
+    "COLOUR": (-2.0, 4.0),
 }
 
 COLORSETS = [
-    (["#03071e", "#370617", "#6a040f", "#9d0208", "#d00000", "#f48c06", "#ffba08"], "Inferno Red"),
-    (["#0b132b", "#1c2541", "#3a506b", "#5bc0be", "#6fffe9"], "Deep Ocean"),
-    (["#2f323a", "#33658a", "#86bbd8", "#f6ae2d", "#f26419"], "Sunrise"),
-    (["#231942", "#5e548e", "#9f86c0", "#be95c4", "#e0b1cb"], "Mauve"),
-    (["#03045e", "#023e8a", "#0077b6", "#0096c7", "#00b4d8", "#48cae4"], "Azure"),
-    (["#1b4332", "#2d6a4f", "#40916c", "#52b788", "#74c69d", "#95d5b2"], "Forest"),
-    (["#132a13", "#31572c", "#4f772d", "#90a955", "#b5c99a"], "Moss"),
-    (["#590d22", "#800f2f", "#a4133c", "#c9184a", "#ff758f"], "Raspberry"),
-    (["#10002b", "#240046", "#3c096c", "#5a189a", "#7b2cbf", "#9d4edd"], "Iris"),
+    (["#1a1a2e", "#16213e", "#0f3460", "#533483", "#e94560"], "Midnight"),
+    (["#2d3436", "#636e72", "#74b9ff", "#0984e3", "#00b894"], "Turquoise"),
+    (["#3d1e6d", "#4a2c7a", "#5d3a87", "#6e4a94", "#7f5aa1"], "Royal Purple"),
+    (["#0c0c0c", "#1a1a1a", "#2d2d2d", "#404040", "#5a5a5a"], "Charcoal"),
+    (["#1e3a5f", "#2a4a6f", "#365a7f", "#426a8f", "#4e7a9f"], "Navy"),
 ]
 
 
@@ -84,7 +78,7 @@ def plot_edge(ax, x, y, title, edge_type, cmap, x_var, y_var):
     if len(x_clean) == 0:
         return
 
-    max_points = 10_000
+    max_points = 20_000
     if len(x_clean) > max_points:
         np.random.seed(42)
         sample_idx = np.random.choice(len(x_clean), size=max_points, replace=False)
@@ -94,17 +88,17 @@ def plot_edge(ax, x, y, title, edge_type, cmap, x_var, y_var):
     hexbin = ax.hexbin(
         x_clean,
         y_clean,
-        gridsize=40,
+        gridsize=50,
         cmap=cmap,
         mincnt=1,
-        linewidths=0.15,
+        linewidths=0.2,
         edgecolors="black",
-        alpha=0.92,
+        alpha=0.95,
     )
 
     cbar = plt.colorbar(hexbin, ax=ax, label="Count", pad=0.01)
-    cbar.ax.tick_params(labelsize=7)
-    cbar.set_label("Count", fontsize=8)
+    cbar.ax.tick_params(labelsize=8)
+    cbar.set_label("Count", fontsize=9)
 
     slope, intercept, r_value, *_ = stats.linregress(x_clean, y_clean)
     x_p1, x_p99 = np.percentile(x_clean, [1, 99])
@@ -128,14 +122,13 @@ def plot_edge(ax, x, y, title, edge_type, cmap, x_var, y_var):
         path_effects=[path_effects.Stroke(linewidth=line_width + 1, foreground="black"), path_effects.Normal()],
     )
 
-    legend = ax.legend(loc="best", fontsize=8, framealpha=0.9, edgecolor="black", fancybox=True)
+    legend = ax.legend(loc="best", fontsize=9, framealpha=0.9, edgecolor="black", fancybox=True)
     legend.get_frame().set_facecolor("#f8f9fa")
 
-    ax.set_title(title, fontsize=10, fontweight="bold", pad=6)
-    ax.tick_params(direction="in", top=True, right=True, labelsize=8, length=4, width=1.0)
-    ax.grid(True, alpha=0.2, linestyle="--", linewidth=0.45)
+    ax.set_title(title, fontsize=11, fontweight="bold", pad=8)
+    ax.tick_params(direction="in", top=True, right=True, labelsize=9, length=5, width=1.1)
+    ax.grid(True, alpha=0.2, linestyle="--", linewidth=0.5)
 
-    # Use percentiles to set axis limits, excluding outliers
     x_p1, x_p99 = np.percentile(x_clean, [1, 99])
     y_p1, y_p99 = np.percentile(y_clean, [1, 99])
     
@@ -171,13 +164,16 @@ def main() -> None:
     sns.set_style("ticks")
     plt.rcParams.update({"font.size": 10, "axes.titlesize": 12, "axes.labelsize": 10, "legend.fontsize": 9})
 
-    fig, axes = plt.subplots(3, 3, figsize=(15, 15))
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
     axes = axes.flatten()
 
     for idx, (x_var, y_var, title, edge_type) in enumerate(EDGE_CONFIG):
         ax = axes[idx]
         cmap = LinearSegmentedColormap.from_list(COLORSETS[idx][1], COLORSETS[idx][0], N=256)
         plot_edge(ax, data_dict[x_var], data_dict[y_var], title, edge_type, cmap, x_var, y_var)
+
+    # Hide the 6th subplot since we only have 5 edges
+    axes[5].axis('off')
 
     plt.tight_layout(rect=[0, 0, 1, 1], pad=2.0)
     plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
@@ -186,3 +182,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -1,5 +1,5 @@
 """
-Null model validation for ALFALFA × NSA dataset.
+Null model validation for Illustris TNG50 simulation dataset.
 Tests whether discovered edges are genuine by shuffling data to destroy causal structure.
 """
 
@@ -8,7 +8,7 @@ import pickle
 
 import numpy as np
 import pandas as pd
-import pytetrad.tools.TetradSearch as ts
+from pytetrad.tools import TetradSearch as ts
 
 graphviz_bin = os.environ.get('GRAPHVIZ_BIN')
 if not graphviz_bin:
@@ -17,14 +17,14 @@ if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 
 PVAL_THRESHOLD = 0.01
-TRUNC_LIMIT = 7
-PENALTY_DISCOUNT = 35
+TRUNCATION_LIMIT = 7
+PENALTY_DISCOUNT = 15
 N_NULL_RUNS = 10
 RANDOM_SEED = 42
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-DATA_PATH = os.path.join(REPO_ROOT, "Data", "alfalfa_nsa_final_13props.pkl")
-RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "null_model_test.pkl")
+DATA_PATH = os.path.join(REPO_ROOT, "Data", "tng50_final.pkl")
+RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "tng50_null_model_test.pkl")
 
 with open(DATA_PATH, "rb") as f:
     data_dict = pickle.load(f)
@@ -35,8 +35,8 @@ df_real = pd.DataFrame(full_data, columns=var_names)
 
 search_real = ts.TetradSearch(df_real)
 search_real.set_verbose(False)
-search_real.use_basis_function_lrt(truncation_limit=TRUNC_LIMIT, alpha=PVAL_THRESHOLD)
-search_real.use_basis_function_bic(truncation_limit=TRUNC_LIMIT, penalty_discount=PENALTY_DISCOUNT)
+search_real.use_basis_function_lrt(truncation_limit=TRUNCATION_LIMIT, alpha=PVAL_THRESHOLD)
+search_real.use_basis_function_bic(truncation_limit=TRUNCATION_LIMIT, penalty_discount=PENALTY_DISCOUNT)
 search_real.run_fcit()
 
 graph_real = str(search_real.get_java())
@@ -53,8 +53,8 @@ for i in range(N_NULL_RUNS):
 
     search_null = ts.TetradSearch(df_null)
     search_null.set_verbose(False)
-    search_null.use_basis_function_lrt(truncation_limit=TRUNC_LIMIT, alpha=PVAL_THRESHOLD)
-    search_null.use_basis_function_bic(truncation_limit=TRUNC_LIMIT, penalty_discount=PENALTY_DISCOUNT)
+    search_null.use_basis_function_lrt(truncation_limit=TRUNCATION_LIMIT, alpha=PVAL_THRESHOLD)
+    search_null.use_basis_function_bic(truncation_limit=TRUNCATION_LIMIT, penalty_discount=PENALTY_DISCOUNT)
     search_null.run_fcit()
 
     graph_null = str(search_null.get_java())
@@ -71,7 +71,9 @@ results = {
     "null_mean": mean_null,
     "null_std": std_null,
     "null_counts": null_edge_counts,
+    "runs": N_NULL_RUNS,
 }
 
 with open(RESULTS_PATH, "wb") as f:
     pickle.dump(results, f)
+

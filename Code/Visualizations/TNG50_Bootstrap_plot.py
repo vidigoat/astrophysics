@@ -1,4 +1,4 @@
-"""Bootstrap validation figure for ALFALFA × NSA dataset - Horizontal bar layout."""
+"""Bootstrap validation figure for TNG50 simulation dataset - Horizontal bar layout."""
 import os
 import sys
 import numpy as np
@@ -12,9 +12,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 from bootstrap_plot_utils import parse_fcit_results, get_edge_display_label
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-CSV_PATH = os.path.join(REPO_ROOT, "Results", "bootstrap_validation.csv")
-FCIT_RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "alfalfa_nsa_fcit_t7_p35.txt")
-OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "alfalfa_bootstrap_validation.png")
+CSV_PATH = os.path.join(REPO_ROOT, "Results", "tng50_bootstrap_validation.csv")
+FCIT_RESULTS_PATH = os.path.join(REPO_ROOT, "Results", "tng50_fcit_t7_p15.txt")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "Plots", "ValidationPlots", "tng50_bootstrap_validation.png")
 
 # Get all edges from main FCIT run (normalized to match bootstrap format)
 main_run_edges = parse_fcit_results(FCIT_RESULTS_PATH)
@@ -40,17 +40,17 @@ df = df.sort_values("percentage", ascending=True).reset_index(drop=True)
 # Set up style
 sns.set_style("whitegrid")
 plt.rcParams.update({
-    "font.size": 9.5,
+    "font.size": 8.5,
     "axes.titlesize": 12,
     "axes.labelsize": 11,
     "xtick.labelsize": 9,
-    "ytick.labelsize": 8.5,
+    "ytick.labelsize": 7.5,
     "legend.fontsize": 9,
     "font.family": "monospace",  # Use monospace for better alignment of edge symbols
 })
 
 # Create horizontal bar chart
-fig, ax = plt.subplots(figsize=(11, max(6, len(df) * 0.45)))
+fig, ax = plt.subplots(figsize=(12, max(9, len(df) * 0.32)))
 
 y_pos = np.arange(len(df))
 pct = df["percentage"].tolist()
@@ -61,7 +61,7 @@ colors = [
     for p in pct
 ]
 
-bars = ax.barh(y_pos, pct, color=colors, alpha=0.9, edgecolor="black", linewidth=1.2, height=0.75)
+bars = ax.barh(y_pos, pct, color=colors, alpha=0.9, edgecolor="black", linewidth=1.2, height=0.7)
 
 # Add percentage labels on bars
 for i, (bar, value) in enumerate(zip(bars, pct)):
@@ -72,11 +72,11 @@ for i, (bar, value) in enumerate(zip(bars, pct)):
         ha="left",
         va="center",
         fontweight="bold",
-        fontsize=9,
+        fontsize=8,
     )
 
 ax.set_yticks(y_pos)
-ax.set_yticklabels(labels, fontsize=8.5, family="monospace")
+ax.set_yticklabels(labels, fontsize=7.5, family="monospace")
 ax.set_xlim(0, 105)
 ax.axvline(x=80, color="gray", linestyle="--", linewidth=1.5, alpha=0.7, label="80% threshold")
 ax.grid(True, alpha=0.3, axis="x", linestyle=":", linewidth=0.8)
@@ -95,3 +95,4 @@ plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
 plt.close()
+

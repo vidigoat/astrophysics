@@ -31,9 +31,12 @@ if not os.path.exists(FITS_PATH):
         f"  - {DEFAULT_FITS_PATH_DATA}"
     )
 
+print(f"Loading ALFALFA×NSA data from: {FITS_PATH}")
+
 with fits.open(FITS_PATH, memmap=True) as hdul:
     data = hdul[1].data
     n_rows = len(data)
+    print(f"Total galaxies in file: {n_rows:,}")
 
     sersic_n = np.asarray(data['SERSIC_N'])
     zdist = np.asarray(data['ZDIST'])
@@ -76,6 +79,12 @@ valid_mask = np.ones(n_rows, dtype=bool)
 for var_name, var_data in data_dict.items():
     finite_mask = np.isfinite(var_data)
     valid_mask &= finite_mask
+
+n_valid = np.count_nonzero(valid_mask)
+if n_valid == 0:
+    raise RuntimeError("No valid rows remain after filtering.")
+
+print(f"Galaxies with finite values: {n_valid:,} ({100*n_valid/n_rows:.1f}%)")
 
 for key in data_dict:
     data_dict[key] = data_dict[key][valid_mask]
@@ -125,8 +134,18 @@ cut_mask &= cut
 for key in data_dict:
     data_dict[key] = data_dict[key][cut_mask]
 
+n_after_cuts = len(data_dict['ELPETRO_MASS'])
+n_removed = n_before_cuts - n_after_cuts
+
+print(f"\nQuality cuts applied:")
+print(f"  Galaxies before cuts: {n_before_cuts:,}")
+print(f"  Galaxies after cuts: {n_after_cuts:,}")
+print(f"  Removed: {n_removed:,} ({100*n_removed/n_before_cuts:.1f}%)")
+
 output_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'Data', 'alfalfa_nsa_final_13props.pkl')
 os.makedirs(os.path.dirname(output_file), exist_ok=True)
 with open(output_file, 'wb') as f_out:
     pickle.dump(data_dict, f_out)
+
+print(f"\nData saved to: {output_file}")
 

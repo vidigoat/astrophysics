@@ -49,7 +49,6 @@ edge_counter = Counter()
 np.random.seed(RANDOM_SEED)
 
 for i in range(N_BOOTSTRAP):
-    print(f"Bootstrap {i+1}/{N_BOOTSTRAP}...", end=" ", flush=True)
     sample_idx = np.random.choice(n_total, size=sample_size, replace=False)
     df_sample = df_full.iloc[sample_idx]
 
@@ -76,8 +75,6 @@ for i in range(N_BOOTSTRAP):
             nodes = sorted([clean_token(parts[0]), clean_token(parts[1])])
             edge = f"{nodes[0]} o-o {nodes[1]}"
             edge_counter[edge] += 1
-    
-    print("Done")
 
 sorted_edges = sorted(edge_counter.items(), key=lambda x: x[1], reverse=True)
 

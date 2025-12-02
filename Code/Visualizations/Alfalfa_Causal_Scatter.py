@@ -25,19 +25,19 @@ EDGE_CONFIG = [
 ]
 
 LABEL_MAP = {
-    "BARYONIC_MASS": r"$\log(M_{\rm baryon}/M_{\odot})$",
-    "ELPETRO_MASS": r"$\log(M_*/M_{\odot})$",
-    "COLOR_U_R": r"$(u-r)$",
-    "ELPETRO_B300": r"$B_{300}$",
-    "ELPETRO_ABSMAG_R": r"$M_r$ (mag)",
-    "ELPETRO_MTOL": r"$M/L$",
-    "logMH": r"$\log(M_{\rm HI}/M_{\odot})$",
-    "ZDIST": r"$z$",
-    "ELPETRO_METS": r"$\log(Z)$",
-    "ELPETRO_BA": r"$b/a$",
-    "ELPETRO_TH50_R": r"$r_{50}$ (arcsec)",
-    "SERSIC_N": r"$n$",
-    "W50": r"$W_{50}$ (km s$^{-1}$)",
+    "BARYONIC_MASS": "Baryonic Mass",
+    "ELPETRO_MASS": "Stellar Mass",
+    "COLOR_U_R": "Colour",
+    "ELPETRO_B300": "Star Formation",
+    "ELPETRO_ABSMAG_R": "Absolute Magnitude",
+    "ELPETRO_MTOL": "Mass-to-Light Ratio",
+    "logMH": "HI Mass",
+    "ZDIST": "Redshift",
+    "ELPETRO_METS": "Metallicity",
+    "ELPETRO_BA": "Axis Ratio",
+    "ELPETRO_TH50_R": "Half-light Radius",
+    "SERSIC_N": "Sersic n",
+    "W50": r"$W_{50}$",
 }
 
 AXIS_LIMITS = {
@@ -80,13 +80,21 @@ def plot_edge(ax, x, y, title, edge_type, cmap, x_var, y_var):
     if len(x_clean) == 0:
         return
 
+    # Reduce point density for better visualization
+    max_points = 20_000
+    if len(x_clean) > max_points:
+        np.random.seed(42)
+        sample_idx = np.random.choice(len(x_clean), size=max_points, replace=False)
+        x_clean = x_clean[sample_idx]
+        y_clean = y_clean[sample_idx]
+
     hexbin = ax.hexbin(
         x_clean,
         y_clean,
-        gridsize=60,
+        gridsize=50,
         cmap=cmap,
         mincnt=1,
-        linewidths=0.25,
+        linewidths=0.2,
         edgecolors="black",
         alpha=0.95,
     )
@@ -96,7 +104,8 @@ def plot_edge(ax, x, y, title, edge_type, cmap, x_var, y_var):
     cbar.set_label("Count", fontsize=9)
 
     slope, intercept, r_value, *_ = stats.linregress(x_clean, y_clean)
-    x_line = np.array([x_clean.min(), x_clean.max()])
+    x_p1, x_p99 = np.percentile(x_clean, [1, 99])
+    x_line = np.array([x_p1, x_p99])
     y_line = slope * x_line + intercept
 
     ax.plot(
@@ -116,17 +125,18 @@ def plot_edge(ax, x, y, title, edge_type, cmap, x_var, y_var):
     ax.tick_params(direction="in", top=True, right=True, labelsize=9, length=5, width=1.1)
     ax.grid(True, alpha=0.2, linestyle="--", linewidth=0.5)
     
-    if x_var in AXIS_LIMITS:
-        ax.set_xlim(AXIS_LIMITS[x_var])
-    else:
-        x_pad = (x_clean.max() - x_clean.min()) * 0.05
-        ax.set_xlim(x_clean.min() - x_pad, x_clean.max() + x_pad)
+    # Use percentiles to set axis limits, excluding outliers
+    x_p1, x_p99 = np.percentile(x_clean, [1, 99])
+    y_p1, y_p99 = np.percentile(y_clean, [1, 99])
     
-    if y_var in AXIS_LIMITS:
-        ax.set_ylim(AXIS_LIMITS[y_var])
-    else:
-        y_pad = (y_clean.max() - y_clean.min()) * 0.05
-        ax.set_ylim(y_clean.min() - y_pad, y_clean.max() + y_pad)
+    x_range = x_p99 - x_p1
+    y_range = y_p99 - y_p1
+    
+    x_pad = x_range * 0.05
+    y_pad = y_range * 0.05
+    
+    ax.set_xlim(x_p1 - x_pad, x_p99 + x_pad)
+    ax.set_ylim(y_p1 - y_pad, y_p99 + y_pad)
 
     ax.set_xlabel(LABEL_MAP.get(x_var, x_var.replace("_", " ")), fontweight="bold", fontsize=10)
     ax.set_ylabel(LABEL_MAP.get(y_var, y_var.replace("_", " ")), fontweight="bold", fontsize=10)

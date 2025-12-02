@@ -35,9 +35,12 @@ def main():
             f"  - {DEFAULT_FITS_PATH_DATA}"
         )
 
+    print(f"Loading NSA data from: {FITS_PATH}")
+    
     with fits.open(FITS_PATH, memmap=True) as hdul:
         data = hdul[1].data
         n_galaxies = len(data)
+        print(f"Total galaxies in file: {n_galaxies:,}")
 
         sersic_n = np.asarray(data["SERSIC_N"])
         zdist = np.asarray(data["ZDIST"])
@@ -54,6 +57,10 @@ def main():
     elpetro_absmag_r = elpetro_absmag[:, 4]
 
     log_stellar_mass = np.log10(np.maximum(elpetro_mass, 1e-10))
+    
+    # Baryonic Mass: For NSA-only, we don't have HI mass data
+    # So we set baryonic mass = stellar mass (in log space)
+    log_baryonic_mass = log_stellar_mass
 
     data_dict = {
         "COLOR_U_R": color_u_r,
@@ -66,6 +73,7 @@ def main():
         "ZDIST": zdist,
         "ELPETRO_MASS": log_stellar_mass,
         "ELPETRO_ABSMAG_R": elpetro_absmag_r,
+        "BARYONIC_MASS": log_baryonic_mass,
     }
 
     valid_mask = np.ones(n_galaxies, dtype=bool)
@@ -76,6 +84,8 @@ def main():
     n_valid = np.count_nonzero(valid_mask)
     if n_valid == 0:
         raise RuntimeError("No valid rows remain after filtering.")
+    
+    print(f"Galaxies with finite values: {n_valid:,} ({100*n_valid/n_galaxies:.1f}%)")
 
     for key in data_dict:
         data_dict[key] = data_dict[key][valid_mask]
@@ -116,9 +126,19 @@ def main():
     for key in data_dict:
         data_dict[key] = data_dict[key][cut_mask]
 
+    n_after_cuts = len(data_dict['ELPETRO_MASS'])
+    n_removed = n_before_cuts - n_after_cuts
+    
+    print(f"\nQuality cuts applied:")
+    print(f"  Galaxies before cuts: {n_before_cuts:,}")
+    print(f"  Galaxies after cuts: {n_after_cuts:,}")
+    print(f"  Removed: {n_removed:,} ({100*n_removed/n_before_cuts:.1f}%)")
+    
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(OUTPUT_FILE, "wb") as fp:
         pickle.dump(data_dict, fp)
+    
+    print(f"\nData saved to: {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()

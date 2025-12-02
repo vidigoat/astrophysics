@@ -18,8 +18,8 @@ if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 
 PVAL_THRESHOLD = 0.01
-TRUNCATION_LIMIT = 14
-PENALTY_DISCOUNT = 50
+TRUNCATION_LIMIT = 7  # Optimized from mock data analysis
+PENALTY_DISCOUNT = 15  # Optimized from mock data analysis
 
 def main() -> None:
     repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -37,9 +37,6 @@ def main() -> None:
     data = np.column_stack([data_dict[var] for var in variables])
     df = pd.DataFrame(data, columns=variables)
 
-    print(f"Running FCIT on TNG50 dataset...")
-    print(f"Subhalos: {df.shape[0]:,}")
-    print(f"Properties: {len(variables)}")
 
     start = time.time()
     search = ts.TetradSearch(df)
@@ -85,8 +82,6 @@ def main() -> None:
         fp.write("\n" + "=" * 70 + "\n\n")
         fp.write(graph_str)
 
-    print(f"Results saved to: {txt_path}")
-    print(f"Graph saved to: {os.path.join(viz_dir, f'{base_name}.png')}")
 
 if __name__ == "__main__":
     main()

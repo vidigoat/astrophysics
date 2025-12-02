@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Data files (too large for GitHub)
+*.pkl
+*.h5
+*.hdf5
+*.fits
+*.fits.gz
+
+# Results (can be regenerated)
+Results/*.csv
+Results/*.pkl
+Results/*.txt
+
+# Plots (can be regenerated)
+Plots/**/*.png
+Plots/**/*.pdf
+Plots/**/*.svg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+practice.py
+*.tmp
+*.bak
+
+# Learning materials (not part of research code)
+Python_Learning_Plan.md
+
+# Paper drafts (keep locally, not in repo)
+Paper_Subsection*.md
+
+# Failed experiments
+Results/fcit_improvement_validation.csv
+Results/alfalfa_nsa_fcit_improved_t7_p35.txt
