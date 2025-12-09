@@ -195,7 +195,7 @@ for idx in range(n_props, len(axes)):
 
 plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
+plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")  # Publication quality 300 DPI
 plt.close()
 
 print(f"Combined distribution plot saved to: {OUTPUT_PATH}")

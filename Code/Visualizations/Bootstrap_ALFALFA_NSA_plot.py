@@ -93,5 +93,5 @@ ax.legend(handles=legend_elements, loc="lower right", fontsize=9, framealpha=0.9
 
 plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
+plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")  # Publication quality 300 DPI
 plt.close()

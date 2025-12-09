@@ -73,12 +73,7 @@ ax.axhline(y=80, color="gray", linestyle="--", linewidth=1.8, alpha=0.7, label="
 ax.grid(True, alpha=0.3, axis="y", linestyle=":", linewidth=0.8)
 ax.set_ylabel("Bootstrap Recovery Rate (%)", fontsize=12, weight="bold", labelpad=12)
 ax.set_xlabel("Causal Edge", fontsize=12, weight="bold", labelpad=12)
-ax.set_title(
-    "NSA-only: Bootstrap Validation\n(10 runs, 80% subsample, N = 484,551 galaxies)",
-    fontsize=13,
-    weight="bold",
-    pad=20,
-)
+# Title removed as requested
 
 legend_elements = [
     Patch(facecolor="#27ae60", edgecolor="black", linewidth=1.2, label="Very Strong (100%)"),
@@ -87,5 +82,5 @@ ax.legend(handles=legend_elements, loc="center", bbox_to_anchor=(0.5, 0.4), font
 
 plt.tight_layout()
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
+plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")  # Publication quality 300 DPI
 plt.close()

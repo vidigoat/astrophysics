@@ -88,8 +88,7 @@ def create_combined_plot():
                            s=50, zorder=5, edgecolors="black", linewidth=0.5)
         
         ax.set_ylabel("Number of Edges", fontweight="bold", fontsize=13)
-        ax.set_title(f"{dataset_name}\nNull Model Validation", 
-                      fontweight="bold", fontsize=14, pad=15)
+        # Title removed as requested
         ax.set_xticks(x_pos)
         ax.set_xticklabels(categories, fontweight="bold")
         ax.set_ylim(0, max(real, null_mean + 2*null_std) * 1.2)
@@ -105,16 +104,14 @@ def create_combined_plot():
                           edgecolor="black", alpha=0.8),
                  fontsize=11, fontweight="bold")
     
-    # Add overall title
-    fig.suptitle("Null Model Validation: Real vs. Shuffled Data",
-                 fontsize=16, fontweight="bold", y=1.02)
+    # Overall title removed as requested
     
     plt.tight_layout()
     
     # Create output directory if needed
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     
-    plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")
+    plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches="tight", facecolor="white")  # Publication quality 300 DPI
 
 if __name__ == "__main__":
     create_combined_plot()
