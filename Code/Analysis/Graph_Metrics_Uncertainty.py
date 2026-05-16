@@ -1,5 +1,5 @@
 """
-Compute graph metrics uncertainty from bootstrap runs.
+Compute graph metrics uncertainty from repeated random subsamples (without replacement).
 Calculates edge density, directed fraction, and orientation fraction with confidence intervals.
 """
 import os
@@ -69,10 +69,10 @@ def compute_graph_metrics(edges, n_variables):
         'undirected_edges': undirected_count
     }
 
-def run_bootstrap_metrics(dataset_name, data_path, n_bootstrap, trunc_limit, penalty_discount, 
+def run_subsample_metrics(dataset_name, data_path, n_subsamples, trunc_limit, penalty_discount, 
                           sample_fraction=0.8, random_seed=42):
-    """Run bootstrap and compute metrics for each run."""
-    print(f"\nRunning {n_bootstrap} bootstraps for {dataset_name}...")
+    """Run FCIT on each random subsample (without replacement) and collect graph metrics."""
+    print(f"\nRunning {n_subsamples} subsample replicates for {dataset_name}...")
     
     with open(data_path, "rb") as f:
         data_dict = pickle.load(f)
@@ -87,9 +87,9 @@ def run_bootstrap_metrics(dataset_name, data_path, n_bootstrap, trunc_limit, pen
     metrics_list = []
     np.random.seed(random_seed)
     
-    for i in range(n_bootstrap):
+    for i in range(n_subsamples):
         if (i + 1) % 10 == 0:
-            print(f"  Bootstrap {i+1}/{n_bootstrap}...")
+            print(f"  Subsample {i+1}/{n_subsamples}...")
         
         sample_idx = np.random.choice(n_total, size=n_sample, replace=False)
         df_sample = df_full.iloc[sample_idx]
@@ -104,10 +104,10 @@ def run_bootstrap_metrics(dataset_name, data_path, n_bootstrap, trunc_limit, pen
             graph_str = str(search.get_java())
             edges = extract_edges_from_graph(graph_str)
             metrics = compute_graph_metrics(edges, n_variables)
-            metrics['bootstrap_id'] = i + 1
+            metrics['subsample_id'] = i + 1
             metrics_list.append(metrics)
         except Exception as e:
-            print(f"  Warning: Bootstrap {i+1} failed: {e}")
+            print(f"  Warning: Subsample replicate {i+1} failed: {e}")
             continue
     
     return pd.DataFrame(metrics_list), n_variables
@@ -126,21 +126,21 @@ DATASETS = [
     {
         'name': 'TNG50',
         'data_path': os.path.join(REPO_ROOT, 'Data', 'tng50_final.pkl'),
-        'n_bootstrap': 50,
+        'n_subsamples': 50,
         'trunc_limit': 7,
         'penalty_discount': 15
     },
     {
         'name': 'NSA',
         'data_path': os.path.join(REPO_ROOT, 'Data', 'nsa_final_10props.pkl'),
-        'n_bootstrap': 10,  # Already done, but we'll recompute metrics
+        'n_subsamples': 10,
         'trunc_limit': 14,
         'penalty_discount': 50
     },
     {
         'name': 'ALFALFA×NSA',
         'data_path': os.path.join(REPO_ROOT, 'Data', 'alfalfa_nsa_final_13props.pkl'),
-        'n_bootstrap': 50,
+        'n_subsamples': 50,
         'trunc_limit': 7,
         'penalty_discount': 35
     }
@@ -149,10 +149,10 @@ DATASETS = [
 all_results = []
 
 for dataset_config in DATASETS:
-    df_metrics, n_vars = run_bootstrap_metrics(
+    df_metrics, n_vars = run_subsample_metrics(
         dataset_name=dataset_config['name'],
         data_path=dataset_config['data_path'],
-        n_bootstrap=dataset_config['n_bootstrap'],
+        n_subsamples=dataset_config['n_subsamples'],
         trunc_limit=dataset_config['trunc_limit'],
         penalty_discount=dataset_config['penalty_discount']
     )
@@ -173,12 +173,12 @@ for dataset_config in DATASETS:
         'Orientation_Fraction_Mean': mean_orient,
         'Orientation_Fraction_CI_Low': ci_low_orient,
         'Orientation_Fraction_CI_High': ci_high_orient,
-        'N_Bootstrap': len(df_metrics),
+        'N_Subsamples': len(df_metrics),
         'N_Variables': n_vars
     })
     
-    # Save individual bootstrap metrics
-    output_path = os.path.join(RESULTS_DIR, f"{dataset_config['name'].lower().replace('×', '_').replace(' ', '_')}_bootstrap_metrics.csv")
+    # Save per-replicate metrics
+    output_path = os.path.join(RESULTS_DIR, f"{dataset_config['name'].lower().replace('×', '_').replace(' ', '_')}_subsample_metrics.csv")
     df_metrics.to_csv(output_path, index=False)
     print(f"  Saved metrics to {output_path}")
 

@@ -57,10 +57,6 @@ def main():
     elpetro_absmag_r = elpetro_absmag[:, 4]
 
     log_stellar_mass = np.log10(np.maximum(elpetro_mass, 1e-10))
-    
-    # Baryonic Mass: For NSA-only, we don't have HI mass data
-    # So we set baryonic mass = stellar mass (in log space)
-    log_baryonic_mass = log_stellar_mass
 
     data_dict = {
         "COLOR_U_R": color_u_r,
@@ -73,7 +69,6 @@ def main():
         "ZDIST": zdist,
         "ELPETRO_MASS": log_stellar_mass,
         "ELPETRO_ABSMAG_R": elpetro_absmag_r,
-        "BARYONIC_MASS": log_baryonic_mass,
     }
 
     valid_mask = np.ones(n_galaxies, dtype=bool)

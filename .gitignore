@@ -34,19 +34,12 @@ Plots/**/*.svg
 
 # OS
 .DS_Store
-Thumbs.db
-
-# Temporary files
+Thumbs.db# Temporary files
 practice.py
 *.tmp
-*.bak
-
-# Learning materials (not part of research code)
-Python_Learning_Plan.md
-
-# Paper drafts (keep locally, not in repo)
-Paper_Subsection*.md
-
-# Failed experiments
+*.bak# Learning materials (not part of research code)
+Python_Learning_Plan.md# Paper drafts (keep locally, not in repo)
+Paper_Subsection*.md# Failed experiments
 Results/fcit_improvement_validation.csv
 Results/alfalfa_nsa_fcit_improved_t7_p35.txt
+.venv/

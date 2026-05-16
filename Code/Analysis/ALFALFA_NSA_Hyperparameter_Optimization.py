@@ -11,10 +11,18 @@ import pickle
 import numpy as np
 import pandas as pd
 from collections import defaultdict
-from scipy.stats import beta
-from pytetrad.tools import TetradSearch as ts
-import networkx as nx
+from scipy.stats import beta  # type: ignore[reportMissingImports]
+from pytetrad.tools import TetradSearch as ts  # type: ignore[reportMissingImports]
+import networkx as nx  # type: ignore[reportMissingModuleSource]
 import matplotlib.pyplot as plt
+
+# Initialize JVM for pytetrad
+try:
+    import jpype
+    if not jpype.isJVMStarted():
+        jpype.startJVM()
+except Exception:
+    pass  # JVM might already be started or will be started by pytetrad
 
 graphviz_bin = os.environ.get('GRAPHVIZ_BIN')
 if not graphviz_bin:
@@ -31,8 +39,9 @@ N_HIDDEN_LAYERS = 4
 N_NEURONS_PER_LAYER = 50
 NOISE_DIST = beta(2, 5)
 
-TRUNCATION_LIMITS = [6, 7, 8]
-PENALTY_DISCOUNTS = [32, 35, 37]
+# Optimal: t=7, p=35.  Wide sweep matching Desmond & Ramsey (2025) Fig. 3 range.
+TRUNCATION_LIMITS = [7]
+PENALTY_DISCOUNTS = [5, 10, 15, 20, 28, 35, 42, 50, 75, 100, 150, 200]
 ALPHAS = [0.01]
 
 # Handle __file__ for notebooks/interactive environments
@@ -395,37 +404,40 @@ def main():
             pickle.dump(mock_datasets, f)
     
     total_runs = len(TRUNCATION_LIMITS) * len(PENALTY_DISCOUNTS) * len(ALPHAS) * N_MOCK_DATASETS
-    checkpoint_path = os.path.join(RESULTS_DIR, 'alfalfa_nsa_mock_data_checkpoint.pkl')
-    results_path_temp = os.path.join(RESULTS_DIR, 'alfalfa_nsa_mock_data_results_temp.csv')
+    results = []
+    run_num = 0
+    successful_runs = 0
+    failed_runs = 0
     
-    if os.path.exists(checkpoint_path):
-        with open(checkpoint_path, 'rb') as f:
-            checkpoint = pickle.load(f)
-        results = checkpoint.get('results', [])
-        completed_combos = checkpoint.get('completed_combos', set())
-        run_num = checkpoint.get('run_num', 0)
-        successful_runs = checkpoint.get('successful_runs', 0)
-        failed_runs = checkpoint.get('failed_runs', 0)
-    else:
-        results = []
-        completed_combos = set()
-        run_num = 0
-        successful_runs = 0
-        failed_runs = 0
+    print(f"\n{'='*70}")
+    print(f"Starting ALFALFA×NSA hyperparameter sensitivity analysis")
+    print(f"Total runs: {total_runs}")
+    print(f"Truncation limits: {TRUNCATION_LIMITS}")
+    print(f"Penalty discounts: {PENALTY_DISCOUNTS}")
+    print(f"Mock datasets: {N_MOCK_DATASETS}")
+    print(f"{'='*70}\n")
     
     for trunc_limit in TRUNCATION_LIMITS:
         for penalty_discount in PENALTY_DISCOUNTS:
             for alpha in ALPHAS:
-                combo_key = (trunc_limit, penalty_discount, alpha)
-                if combo_key in completed_combos:
-                    continue
+                print(f"\nProcessing: t={trunc_limit}, p={penalty_discount}, α={alpha}")
+                dataset_count = 0
                 
                 for mock_data in mock_datasets[:N_MOCK_DATASETS]:
                     run_num += 1
+                    dataset_count += 1
                     df = mock_data['data']
                     true_edges = mock_data['true_edges']
                     
                     try:
+                        # Check and restart JVM if needed
+                        try:
+                            import jpype
+                            if not jpype.isJVMStarted():
+                                jpype.startJVM()
+                        except Exception:
+                            pass
+                        
                         search = ts.TetradSearch(df)
                         search.set_verbose(False)
                         search.use_basis_function_lrt(truncation_limit=trunc_limit, alpha=alpha)
@@ -448,37 +460,22 @@ def main():
                         })
                         successful_runs += 1
                         
-                        if len(results) % 50 == 0:
-                            checkpoint = {
-                                'results': results,
-                                'completed_combos': completed_combos,
-                                'run_num': run_num,
-                                'successful_runs': successful_runs,
-                                'failed_runs': failed_runs
-                            }
-                            with open(checkpoint_path, 'wb') as f:
-                                pickle.dump(checkpoint, f)
-                            if len(results) > 0:
-                                pd.DataFrame(results).to_csv(results_path_temp, index=False)
-                    except Exception:
+                        if dataset_count % 10 == 0 or dataset_count == N_MOCK_DATASETS:
+                            print(f"  Completed {dataset_count}/{N_MOCK_DATASETS} datasets (Run {run_num}/{total_runs}, Success: {successful_runs}, Failed: {failed_runs})")
+                    except Exception as e:
                         failed_runs += 1
+                        error_msg = str(e)
+                        # Check if JVM crashed
+                        if 'JVMNotRunning' in error_msg or 'JVM' in error_msg:
+                            if dataset_count <= 3 or dataset_count % 10 == 0:
+                                print(f"  JVM error at dataset {dataset_count}: {error_msg[:100]}")
+                                print(f"  Note: JVM may have crashed. Consider restarting the script.")
+                        else:
+                            if dataset_count <= 3 or dataset_count % 10 == 0:
+                                print(f"  Error at dataset {dataset_count}: {type(e).__name__}: {error_msg[:100]}")
                         continue
                 
-                completed_combos.add(combo_key)
-                checkpoint = {
-                    'results': results,
-                    'completed_combos': completed_combos,
-                    'run_num': run_num,
-                    'successful_runs': successful_runs,
-                    'failed_runs': failed_runs
-                }
-                with open(checkpoint_path, 'wb') as f:
-                    pickle.dump(checkpoint, f)
-                if len(results) > 0:
-                    pd.DataFrame(results).to_csv(results_path_temp, index=False)
-    
-    if os.path.exists(checkpoint_path):
-        os.remove(checkpoint_path)
+                print(f"Finished: t={trunc_limit}, p={penalty_discount}, α={alpha} ({dataset_count} datasets)")
     
     results_df = pd.DataFrame(results)
     
@@ -564,8 +561,13 @@ def main():
         stratified_df.to_csv(os.path.join(RESULTS_DIR, 'alfalfa_nsa_mock_data_stratified_analysis.csv'), index=False)
     
     best = summary_df.loc[summary_df['mean_f1'].idxmax()]
+    print(f"\n{'='*70}")
+    print(f"Analysis complete!")
+    print(f"Total runs: {run_num}/{total_runs}")
+    print(f"Successful: {successful_runs}, Failed: {failed_runs}")
     print(f"Best hyperparameters: t={best['truncation_limit']}, p={best['penalty_discount']}, "
           f"F1={best['mean_f1']:.3f}±{best['std_f1']:.3f}")
+    print(f"{'='*70}\n")
 
 if __name__ == "__main__":
     main()

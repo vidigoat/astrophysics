@@ -123,7 +123,7 @@ def main():
     cut_mask = np.ones(n_before_cuts, dtype=bool)
 
     # Mass cuts (log space, after scaling)
-    cut_mask &= (data_dict['DM_MASS'] > 5.0) & (data_dict['DM_MASS'] < 13.0)
+    cut_mask &= (data_dict['DM_MASS'] > 5.0)
     cut_mask &= (data_dict['STELLAR_MASS'] > 6.0) & (data_dict['STELLAR_MASS'] < 14.0)
     cut_mask &= (data_dict['GAS_MASS'] > 6.5) & (data_dict['GAS_MASS'] < 11.5)
     cut_mask &= (data_dict['BH_MASS'] < 12.0)
@@ -138,11 +138,9 @@ def main():
     
     # Metallicity cuts
     cut_mask &= (data_dict['GAS_METALLICITY'] >= 0.0) & (data_dict['GAS_METALLICITY'] < 0.15)
-    cut_mask &= (data_dict['STAR_METALLICITY'] > 0.0005) & (data_dict['STAR_METALLICITY'] < 0.15)
     
     # Photometric cuts
-    cut_mask &= (data_dict['PHOTOMETRIC_U'] > -26.0) & (data_dict['PHOTOMETRIC_U'] < -9.0)
-    cut_mask &= (data_dict['PHOTOMETRIC_R'] > -27.0) & (data_dict['PHOTOMETRIC_R'] < -9.0)
+    cut_mask &= (data_dict['PHOTOMETRIC_R'] > -26.0) & (data_dict['PHOTOMETRIC_R'] < -9.0)
     
     # Star formation and color cuts
     sfr_log = np.log10(np.maximum(data_dict['SFR'], 1e-10))
