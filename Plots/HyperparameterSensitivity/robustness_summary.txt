@@ -1,0 +1,63 @@
+Hyperparameter robustness — final summary
+(stability measured against the baseline PAG orientation at the paper's chosen t,p, not against a hardcoded physical-intuition mark)
+
+========================================================================
+ALFALFA_NSA  (baseline t=7, p=35)
+========================================================================
+  Edge count: baseline=12, min=10, max=14, relative spread=33.3%
+  Grid (t, p, edges, dir_frac):
+     t=  6 p= 28  edges= 14  dir_frac=0.50
+     t=  6 p= 35  edges= 13  dir_frac=0.38
+     t=  6 p= 42  edges= 12  dir_frac=0.25
+     t=  7 p= 28  edges= 14  dir_frac=0.50
+   * t=  7 p= 35  edges= 12  dir_frac=0.25
+     t=  7 p= 42  edges= 11  dir_frac=0.27
+     t=  8 p= 28  edges= 12  dir_frac=0.25
+     t=  8 p= 35  edges= 11  dir_frac=0.27
+     t=  8 p= 42  edges= 10  dir_frac=0.20
+  Key edges (stability vs baseline orientation):
+           ELPETRO_MASS - ELPETRO_ABSMAG_R        base=   '<-o'  same=7/9  arrow_ok=7/9  miss=0/9  [in baseline]
+                  logMH - ELPETRO_MASS            base=   'o-o'  same=6/9  arrow_ok=6/9  miss=3/9  [in baseline]
+                    W50 - logMH                   base=      ''  same=0/9  arrow_ok=0/9  miss=7/9  [absent in baseline; sanity-check only]
+  VERDICT: STABLE-ORIENT: all baseline key edges hold orientation in ≥6/9 cells; but total edge density varies 33%.
+
+========================================================================
+NSA  (baseline t=14, p=50)
+========================================================================
+  Edge count: baseline=16, min=13, max=19, relative spread=37.5%
+  Grid (t, p, edges, dir_frac):
+     t= 13 p= 40  edges= 19  dir_frac=0.32
+     t= 13 p= 50  edges= 17  dir_frac=0.29
+     t= 13 p= 60  edges= 15  dir_frac=0.27
+     t= 14 p= 40  edges= 17  dir_frac=0.29
+   * t= 14 p= 50  edges= 16  dir_frac=0.25
+     t= 14 p= 60  edges= 14  dir_frac=0.14
+     t= 15 p= 40  edges= 16  dir_frac=0.25
+     t= 15 p= 50  edges= 14  dir_frac=0.14
+     t= 15 p= 60  edges= 13  dir_frac=0.15
+  Key edges (stability vs baseline orientation):
+           ELPETRO_MASS - ELPETRO_ABSMAG_R        base=   '<-o'  same=6/9  arrow_ok=6/9  miss=0/9  [in baseline]
+       ELPETRO_ABSMAG_R - ELPETRO_TH50_R          base=   '<-o'  same=6/9  arrow_ok=6/9  miss=3/9  [in baseline]
+           ELPETRO_MTOL - ELPETRO_ABSMAG_R        base=      ''  same=0/9  arrow_ok=0/9  miss=6/9  [absent in baseline; sanity-check only]
+  VERDICT: STABLE-ORIENT: all baseline key edges hold orientation in ≥6/9 cells; but total edge density varies 38%.
+
+========================================================================
+TNG50  (baseline t=7, p=15)
+========================================================================
+  Edge count: baseline=33, min=30, max=40, relative spread=30.3%
+  Grid (t, p, edges, dir_frac):
+     t=  6 p= 12  edges= 40  dir_frac=0.65
+     t=  6 p= 15  edges= 37  dir_frac=0.57
+     t=  6 p= 18  edges= 34  dir_frac=0.56
+     t=  7 p= 12  edges= 35  dir_frac=0.49
+   * t=  7 p= 15  edges= 33  dir_frac=0.48
+     t=  7 p= 18  edges= 31  dir_frac=0.45
+     t=  8 p= 12  edges= 33  dir_frac=0.55
+     t=  8 p= 15  edges= 33  dir_frac=0.55
+     t=  8 p= 18  edges= 30  dir_frac=0.33
+  Key edges (stability vs baseline orientation):
+           STELLAR_MASS - BARYONIC_MASS           base=   'o-o'  same=9/9  arrow_ok=9/9  miss=0/9  [in baseline]
+           STELLAR_MASS - HALFMASS_RAD            base=   'o-o'  same=9/9  arrow_ok=9/9  miss=0/9  [in baseline]
+               GAS_MASS - BH_MASS                 base=   'o-o'  same=9/9  arrow_ok=9/9  miss=0/9  [in baseline]
+                DM_MASS - GAS_METALLICITY         base=      ''  same=0/9  arrow_ok=0/9  miss=8/9  [absent in baseline; sanity-check only]
+  VERDICT: STABLE-ORIENT: all baseline key edges hold orientation in ≥6/9 cells; but total edge density varies 30%.

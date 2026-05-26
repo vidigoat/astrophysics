@@ -19,6 +19,10 @@ build/
 Results/*.csv
 Results/*.pkl
 Results/*.txt
+Results/*.log
+
+# JVM crash dumps
+hs_err_pid*.log
 
 # Plots (can be regenerated)
 Plots/**/*.png
