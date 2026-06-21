@@ -9,10 +9,13 @@ of variables:
   - the orientation distribution (arrow-at-B / arrow-at-A / undirected)
 
 The "consensus graph" keeps edges present in >= PRESENCE_THR of runs, and
-assigns each a single orientation only if one direction dominates in
->= ORIENT_THR of the runs in which the edge appears; otherwise it is reported
-as undirected (o-o). This is the reproducible structure that should be plotted
-and interpreted in the paper.
+assigns each the modal full PAG mark (-->, o->, o-o, <->) only if that mark
+dominates in >= ORIENT_THR of the runs in which the edge appears; otherwise it
+is reported as undirected (o-o). Crucially the FULL mark is preserved, so a
+fully directed edge (-->, no latent confounder under faithfulness) is kept
+distinct from a partially oriented one (o->, latent confounder still possible).
+This is the reproducible structure that should be plotted and interpreted in the
+paper.
 
 Output: Results/consensus_<dataset>.csv and a printed summary.
 """
@@ -73,28 +76,27 @@ def parse_edges(graph_str):
     return edges
 
 
+_FLIP = {"-->": "<--", "<--": "-->", "o->": "<-o", "<-o": "o->", "o-o": "o-o", "<->": "<->"}
+
+
 def canon(a, mark, b):
-    """Return (pairkey, arrow_at) where pairkey is sorted (x,y) and arrow_at in
-    {'second','first','none'} describing where the arrowhead points in sorted order."""
+    """Return (pairkey, canonical_mark) where pairkey is the sorted pair (x, y)
+    with x <= y, and canonical_mark is the *full* PAG mark rewritten for that
+    ordering. We deliberately keep the complete mark (-->, o->, o-o, <->) rather
+    than collapsing it to an arrow position, so that a partially-oriented edge
+    (o->, latent confounder still possible) is never reported as a fully directed
+    edge (-->, confounder excluded under faithfulness). The o->/--> split is then
+    aggregated across runs like everything else, so the reported split is itself a
+    consensus rather than an artefact of any single run."""
     if a <= b:
-        x, y, mk = a, b, mark
-    else:
-        # flip endpoints and mark
-        flip = {"-->": "<--", "<--": "-->", "o->": "<-o", "<-o": "o->", "o-o": "o-o", "<->": "<->"}
-        x, y, mk = b, a, flip[mark]
-    if mk in ("-->", "o->"):
-        arrow = "second"     # x ... -> y  (arrow at y)
-    elif mk in ("<--", "<-o"):
-        arrow = "first"      # x <- ... y  (arrow at x)
-    else:
-        arrow = "none"       # o-o or <->
-    return (x, y), arrow
+        return (a, b), mark
+    return (b, a), _FLIP[mark]
 
 
 def run_dataset(name, fname, t, p, n_runs):
     df = load(fname)              # load ONCE, reuse across runs
     pair_present = Counter()
-    pair_arrow = {}  # pairkey -> Counter of arrow positions
+    pair_marks = {}  # pairkey -> Counter of canonical full marks
     for i in range(n_runs):
         s = ts.TetradSearch(df)
         s.set_verbose(False)
@@ -102,31 +104,31 @@ def run_dataset(name, fname, t, p, n_runs):
         s.use_basis_function_bic(truncation_limit=t, penalty_discount=p)
         s.run_fcit()
         for a, mk, b in parse_edges(str(s.get_java())):
-            key, arrow = canon(a, mk, b)
+            key, cmark = canon(a, mk, b)
             pair_present[key] += 1
-            pair_arrow.setdefault(key, Counter())[arrow] += 1
+            pair_marks.setdefault(key, Counter())[cmark] += 1
 
     rows = []
     for key, cnt in pair_present.items():
         x, y = key
-        arrows = pair_arrow[key]
-        n2 = arrows.get("second", 0)   # arrow at y
-        n1 = arrows.get("first", 0)    # arrow at x
-        nn = arrows.get("none", 0)
-        # decide consensus orientation among the runs where the edge appears
-        if n2 / cnt >= ORIENT_THR:
-            cons = f"{x} --> {y}"
-        elif n1 / cnt >= ORIENT_THR:
-            cons = f"{y} --> {x}"
-        else:
-            cons = f"{x} o-o {y}"
+        marks = pair_marks[key]
+        top_mark, top_n = marks.most_common(1)[0]
+        # arrow-position tallies (kept for reference / backward compatibility)
+        n_at_y = sum(v for m, v in marks.items() if m in ("-->", "o->"))
+        n_at_x = sum(v for m, v in marks.items() if m in ("<--", "<-o"))
+        n_none = sum(v for m, v in marks.items() if m in ("o-o", "<->"))
+        # consensus full mark: the modal mark if it dominates >= ORIENT_THR of the
+        # runs in which the edge appears, otherwise report it as undirected.
+        cons_mark = top_mark if top_n / cnt >= ORIENT_THR else "o-o"
         rows.append({
             "var_a": x, "var_b": y,
             "presence": round(cnt / n_runs, 3),
-            "arrow_at_b_frac": round(n2 / cnt, 3),
-            "arrow_at_a_frac": round(n1 / cnt, 3),
-            "undirected_frac": round(nn / cnt, 3),
-            "consensus": cons,
+            "mark_frac": round(top_n / cnt, 3),
+            "arrow_at_b_frac": round(n_at_y / cnt, 3),
+            "arrow_at_a_frac": round(n_at_x / cnt, 3),
+            "undirected_frac": round(n_none / cnt, 3),
+            "consensus_mark": cons_mark,
+            "consensus": f"{x} {cons_mark} {y}",
         })
     df_out = pd.DataFrame(rows).sort_values("presence", ascending=False)
     return df_out
