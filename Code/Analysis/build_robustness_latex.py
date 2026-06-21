@@ -7,8 +7,8 @@ Reads:
   Results/hyperparameter_robustness_marks.csv      – per-edge raw marks per cell
 
 Writes:
-  Plots/HyperparameterSensitivity/robustness_tables.tex
-  Plots/HyperparameterSensitivity/robustness_summary.txt
+  Results/robustness_tables.tex
+  Results/robustness_summary.txt
 
 Stability is measured against the **baseline orientation** observed at the
 paper's chosen (t0, p0), not against a hardcoded physical-intuition direction.
@@ -35,7 +35,7 @@ import pandas as pd
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CELLS_CSV = os.path.join(REPO_ROOT, "Results", "hyperparameter_robustness_real_data.csv")
 MARKS_CSV = os.path.join(REPO_ROOT, "Results", "hyperparameter_robustness_marks.csv")
-OUT_DIR = os.path.join(REPO_ROOT, "Plots", "HyperparameterSensitivity")
+OUT_DIR = os.path.join(REPO_ROOT, "Results")
 TEX_PATH = os.path.join(OUT_DIR, "robustness_tables.tex")
 TXT_PATH = os.path.join(OUT_DIR, "robustness_summary.txt")
 

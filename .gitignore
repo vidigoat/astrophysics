@@ -7,6 +7,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+.venv/
 
 # Data files (too large for GitHub)
 *.pkl
@@ -15,19 +16,22 @@ build/
 *.fits
 *.fits.gz
 
-# Results (can be regenerated)
+# Results (regenerable) — but keep the small consensus outputs that ARE the result
 Results/*.csv
 Results/*.pkl
 Results/*.txt
 Results/*.log
+!Results/consensus_*.csv
+!Results/CURRENT_fcit_graphs.txt
 
 # JVM crash dumps
 hs_err_pid*.log
 
-# Plots (can be regenerated)
-Plots/**/*.png
-Plots/**/*.pdf
-Plots/**/*.svg
+# Plots (all regenerable from Code/ — never tracked)
+Plots/
+
+# Paper (maintained in Overleaf, not in the repo)
+paper/
 
 # IDE
 .vscode/
@@ -38,12 +42,19 @@ Plots/**/*.svg
 
 # OS
 .DS_Store
-Thumbs.db# Temporary files
+Thumbs.db
+
+# Temporary / scratch files
 practice.py
 *.tmp
-*.bak# Learning materials (not part of research code)
-Python_Learning_Plan.md# Paper drafts (keep locally, not in repo)
-Paper_Subsection*.md# Failed experiments
+*.bak
+
+# Learning materials (not part of research code)
+Python_Learning_Plan.md
+
+# Paper drafts (keep locally, not in repo)
+Paper_Subsection*.md
+
+# Failed experiments
 Results/fcit_improvement_validation.csv
 Results/alfalfa_nsa_fcit_improved_t7_p35.txt
-.venv/

@@ -1,6 +1,6 @@
 # Causal Structure in Galaxies: Comparing Simulations and Observations
 
-Code for the paper *"Causal Structure in Galaxies: Comparing Simulations and Observations"* by Vidit Patankar. The work uses causal discovery (the FCIT algorithm) to learn the directed relationships between galaxy properties — mass, luminosity, size, metallicity, gas content, and so on — and compares what we find in real observations (NSA optical galaxies and ALFALFA HI-selected galaxies) against what we find in cosmological simulations (TNG50). The goal is to see whether simulations reproduce the same causal structure that the real universe shows.
+Code for the paper *"Causal Structure in Galaxies: Comparing Simulations and Observations"* by Vidit Patankar. The work uses causal discovery (the FCIT algorithm) to learn the directed relationships between galaxy properties — mass, luminosity, size, metallicity, gas content, and so on — and compares the causal structure recovered from real observations (NSA optical galaxies and ALFALFA HI-selected galaxies) against that recovered from a cosmological simulation (TNG50). Because FCIT's edge orientations are not fully deterministic, each graph is reported as a consensus over many repeated runs so the results are reproducible. The goal is to test whether simulations reproduce the same causal structure that the real universe shows.
 
 ## License
 
