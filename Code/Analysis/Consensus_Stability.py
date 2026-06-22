@@ -41,7 +41,7 @@ RESULTS = os.path.join(REPO, "Results")
 CFG = [
     ("ALFALFA_NSA", "alfalfa_nsa_final_13props.pkl", 7, 35, 50),
     ("TNG50",       "tng50_final.pkl",                7, 15, 50),
-    ("NSA",         "nsa_final_10props.pkl",         14, 50, 10),
+    ("NSA",         "nsa_final_10props.pkl",         14, 150, 10),
 ]
 
 _MARKS = ("<->", "-->", "<--", "o->", "<-o", "o-o")
@@ -136,7 +136,11 @@ def run_dataset(name, fname, t, p, n_runs):
 
 def main():
     os.makedirs(RESULTS, exist_ok=True)
+    only = os.environ.get("CONSENSUS_ONLY")
+    only = set(only.split(",")) if only else None
     for name, fname, t, p, n_runs in CFG:
+        if only and name not in only:
+            continue
         print(f"\n{'='*72}\n{name}  (t={t}, p={p}, {n_runs} runs)\n{'='*72}", flush=True)
         out = run_dataset(name, fname, t, p, n_runs)
         out.to_csv(os.path.join(RESULTS, f"consensus_{name}.csv"), index=False)

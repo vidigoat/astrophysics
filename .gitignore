@@ -33,6 +33,9 @@ Plots/
 # Paper (maintained in Overleaf, not in the repo)
 paper/
 
+# Agent / session data
+.claude/
+
 # IDE
 .vscode/
 .idea/

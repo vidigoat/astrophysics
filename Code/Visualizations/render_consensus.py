@@ -28,7 +28,7 @@ PRESENCE_THR = 0.50
 
 DATASETS = {
     "ALFALFA_NSA": "alfalfa_nsa_fcit_t7_p35",
-    "NSA":         "nsa_fcit_t14_p50",
+    "NSA":         "nsa_fcit_t14_p150",
     "TNG50":       "tng50_fcit_t7_p15",
 }
 
