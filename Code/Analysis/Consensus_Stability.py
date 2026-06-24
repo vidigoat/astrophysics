@@ -41,7 +41,7 @@ RESULTS = os.path.join(REPO, "Results")
 CFG = [
     ("ALFALFA_NSA", "alfalfa_nsa_final_13props.pkl", 7, 35, 50),
     ("TNG50",       "tng50_final.pkl",                7, 15, 50),
-    ("NSA",         "nsa_final_10props.pkl",         14, 150, 10),
+    ("NSA",         "nsa_final_10props.pkl",         14, 50, 10),
 ]
 
 _MARKS = ("<->", "-->", "<--", "o->", "<-o", "o-o")
