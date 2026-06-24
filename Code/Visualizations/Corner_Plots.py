@@ -21,7 +21,7 @@ mpl.rcParams['ytick.color'] = '0.2'
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO_ROOT / "Data"
-PLOTS_DIR = REPO_ROOT / "Plots" / "CornerPlots"
+PLOTS_DIR = REPO_ROOT / "Plots"
 
 CONTOUR_QUANTILES = (0.393, 0.865, 0.989)
 OUTER_PARTICLES_QUANTILE = 0.995
@@ -58,24 +58,45 @@ COLORS = {
     }
 }
 
-NSA_VARS = ["ZDIST", "ELPETRO_ABSMAG_R", "log_B300", "ELPETRO_MASS", 
-            "SERSIC_N", "ELPETRO_BA", "ELPETRO_TH50_R"]
+# All variables used in each analysis (matching Tables 1-3 in the paper), so the
+# corner plots depict the full cleaned sample fed to FCIT.
+NSA_VARS = ["ZDIST", "ELPETRO_ABSMAG_R", "log_B300", "ELPETRO_MASS",
+            "SERSIC_N", "ELPETRO_BA", "ELPETRO_TH50_R",
+            "COLOR_U_R", "ELPETRO_METS", "ELPETRO_MTOL"]
 NSA_LABELS = {
     "ZDIST": "ZDIST",
     "ELPETRO_ABSMAG_R": "ABSMAG",
     "log_B300": "log(B300)",
     "ELPETRO_MASS": "log(MASS)",
     "SERSIC_N": "SERSIC_N",
-    "ELPETRO_BA": "ELPETRO_BA",
-    "ELPETRO_TH50_R": "ELPETRO_TH50_R",
+    "ELPETRO_BA": "BA",
+    "ELPETRO_TH50_R": "TH50",
+    "COLOR_U_R": "COLOR",
+    "ELPETRO_METS": "METS",
+    "ELPETRO_MTOL": "MTOL",
 }
 
-TNG50_VARS = ["STELLAR_MASS", "BARYONIC_MASS", "GAS_MASS", "HALFMASS_RAD",
-              "SFR", "PHOTOMETRIC_R", "COLOUR"]
-TNG50_LABELS = {v: v for v in TNG50_VARS}
+ALFALFA_VARS = ["ZDIST", "ELPETRO_ABSMAG_R", "log_B300", "ELPETRO_MASS",
+                "SERSIC_N", "ELPETRO_BA", "ELPETRO_TH50_R",
+                "logMH", "W50", "BARYONIC_MASS",
+                "COLOR_U_R", "ELPETRO_METS", "ELPETRO_MTOL"]
+ALFALFA_LABELS = dict(NSA_LABELS, **{
+    "logMH": "logMH",
+    "W50": "W50",
+    "BARYONIC_MASS": "BARYONIC",
+})
 
-ALFALFA_VARS = NSA_VARS
-ALFALFA_LABELS = NSA_LABELS
+TNG50_VARS = ["DM_MASS", "STELLAR_MASS", "GAS_MASS", "BH_MASS",
+              "BARYONIC_MASS", "HALFMASS_RAD", "VEL_DISP", "VMAX",
+              "GAS_METALLICITY", "STAR_METALLICITY",
+              "PHOTOMETRIC_R", "PHOTOMETRIC_U", "COLOUR", "SFR"]
+TNG50_LABELS = {
+    "DM_MASS": "DM_MASS", "STELLAR_MASS": "STELLAR", "GAS_MASS": "GAS",
+    "BH_MASS": "BH", "BARYONIC_MASS": "BARYONIC", "HALFMASS_RAD": "HALFMASS_R",
+    "VEL_DISP": "VEL_DISP", "VMAX": "VMAX", "GAS_METALLICITY": "GAS_MET",
+    "STAR_METALLICITY": "STAR_MET", "PHOTOMETRIC_R": "PHOT_R",
+    "PHOTOMETRIC_U": "PHOT_U", "COLOUR": "COLOUR", "SFR": "SFR",
+}
 
 
 def load_data(dataset_name: str) -> pd.DataFrame:
