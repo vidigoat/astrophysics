@@ -69,6 +69,12 @@ def main():
         df = df[df["presence"] >= PRESENCE_THR]
         g = gviz.Digraph(engine="dot")
         g.attr(rankdir="TB", splines="true", overlap="false")
+        if name == "TNG50":
+            # The TNG50 graph has many nodes and is laid out very wide/flat by
+            # default, which makes it look small next to the squarer ALFALFA/NSA
+            # graphs. Nudge it toward a more square aspect so the three figures
+            # are visually balanced at the same printed width.
+            g.attr(ratio="0.75", ranksep="0.55", nodesep="0.35")
         g.attr("node", shape="ellipse", fontsize="11", fontname="Helvetica")
         g.attr("edge", arrowsize="0.8")
         n_or = n_undir = 0
