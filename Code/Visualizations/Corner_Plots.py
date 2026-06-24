@@ -312,10 +312,9 @@ def main():
     parser.add_argument("--dataset", choices=["NSA", "TNG50", "ALFALFA"], 
                        default="NSA")
     parser.add_argument("--all", action="store_true")
-    parser.add_argument("--dpi", type=int, default=150,
-                       help="Resolution; 150 keeps file size light for submission")
-    parser.add_argument("--points", type=int, default=8000,
-                       help="Number of scatter points (lower = smaller file)")
+    parser.add_argument("--dpi", type=int, default=150)
+    parser.add_argument("--points", type=int, default=20000,
+                       help="Number of points (20000 for dense)")
     args = parser.parse_args()
     
     if args.all:
