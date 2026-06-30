@@ -61,3 +61,6 @@ Paper_Subsection*.md
 # Failed experiments
 Results/fcit_improvement_validation.csv
 Results/alfalfa_nsa_fcit_improved_t7_p35.txt
+
+# Local revision notes (not part of the code repo)
+.revision/

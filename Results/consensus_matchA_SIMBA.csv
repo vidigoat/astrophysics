@@ -1,0 +1,6 @@
+var_a,var_b,presence,consensus_mark
+colour,metallicity,1.0,o-o
+colour,r_mag,1.0,-->
+metallicity,stellar_mass,1.0,o-o
+r_mag,stellar_mass,1.0,<--
+size,stellar_mass,1.0,o-o

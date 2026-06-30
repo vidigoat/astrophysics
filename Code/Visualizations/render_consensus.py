@@ -58,6 +58,49 @@ def _mark_of(row):
     return "o-o"
 
 
+# Plain-English names for each variable, so PAG nodes carry both a readable
+# label and the technical catalogue name (cf. Desmond & Ramsey 2026, Fig. 4).
+PLAIN = {
+    # observational (ALFALFA--NSA, NSA)
+    "ZDIST": "Redshift",
+    "ELPETRO_ABSMAG_R": "r-band luminosity",
+    "ELPETRO_B300": "Recent star formation",
+    "ELPETRO_MASS": "Stellar mass",
+    "SERSIC_N": "Sersic index",
+    "ELPETRO_BA": "Axis ratio",
+    "ELPETRO_TH50_R": "Half-light radius",
+    "logMH": "HI mass",
+    "W50": "HI line width",
+    "BARYONIC_MASS": "Baryonic mass",
+    "COLOR_U_R": "Colour (U-R)",
+    "ELPETRO_METS": "Stellar metallicity",
+    "ELPETRO_MTOL": "Mass-to-light ratio",
+    # TNG50
+    "DM_MASS": "Halo mass",
+    "STELLAR_MASS": "Stellar mass",
+    "GAS_MASS": "Gas mass",
+    "BH_MASS": "Black-hole mass",
+    "HALFMASS_RAD": "Half-mass radius",
+    "VEL_DISP": "Velocity dispersion",
+    "VMAX": "Max. circular velocity",
+    "GAS_METALLICITY": "Gas metallicity",
+    "STAR_METALLICITY": "Stellar metallicity",
+    "PHOTOMETRIC_R": "r-band luminosity",
+    "PHOTOMETRIC_U": "u-band luminosity",
+    "COLOUR": "Colour (U-R)",
+    "SFR": "Star formation",
+}
+
+
+def _node_label(var):
+    """Graphviz HTML-like label: plain-English name on top, technical
+    variable name beneath in a smaller font. Falls back to the raw name."""
+    plain = PLAIN.get(var)
+    if not plain:
+        return var
+    return f'<{plain}<BR/><FONT POINT-SIZE="8">{var}</FONT>>'
+
+
 def main():
     os.makedirs(PLOTS, exist_ok=True)
     for name, base in DATASETS.items():
@@ -77,6 +120,13 @@ def main():
             g.attr(ratio="0.75", ranksep="0.55", nodesep="0.35")
         g.attr("node", shape="ellipse", fontsize="11", fontname="Helvetica")
         g.attr("edge", arrowsize="0.8")
+        # Define every node first, with a dual (plain + technical) label.
+        seen = set()
+        for _, r in df.iterrows():
+            for v in (str(r["var_a"]), str(r["var_b"])):
+                if v not in seen:
+                    seen.add(v)
+                    g.node(v, label=_node_label(v))
         n_or = n_undir = 0
         for _, r in df.iterrows():
             a, b = str(r["var_a"]), str(r["var_b"])

@@ -13,7 +13,7 @@ from scipy import stats as scipy_stats  # type: ignore[reportMissingImports]
 from matplotlib.ticker import MaxNLocator
 
 # Publication settings
-mpl.rcParams['font.size'] = 10
+mpl.rcParams['font.size'] = 13
 mpl.rcParams['axes.linewidth'] = 1.0
 mpl.rcParams['axes.edgecolor'] = '0.25'
 mpl.rcParams['xtick.color'] = '0.2'
@@ -184,12 +184,12 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
     n = len(vars_list)
     
     # Create figure
-    fig, axes = plt.subplots(n, n, figsize=(2.6*n, 2.6*n))
+    fig, axes = plt.subplots(n, n, figsize=(1.6*n, 1.6*n))
     if n == 1:
         axes = np.array([[axes]])
     fig.patch.set_facecolor('white')
-    plt.subplots_adjust(hspace=0.03, wspace=0.03,
-                       left=0.09, right=0.97, bottom=0.09, top=0.94)
+    plt.subplots_adjust(hspace=0.04, wspace=0.04,
+                       left=0.10, right=0.98, bottom=0.10, top=0.98)
     
     for i in range(n):
         for j in range(n):
@@ -271,29 +271,25 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
                     except Exception:
                         pass
 
-            ax.tick_params(labelsize=10, direction='in', top=True, right=True,
+            ax.tick_params(labelsize=15, direction='in', top=True, right=True,
                            length=4, width=0.9, colors='0.2')
-            ax.xaxis.set_major_locator(MaxNLocator(5, integer=False))
-            ax.yaxis.set_major_locator(MaxNLocator(5, integer=False))
+            ax.xaxis.set_major_locator(MaxNLocator(4, integer=False))
+            ax.yaxis.set_major_locator(MaxNLocator(4, integer=False))
             if i != j:
                 ax.grid(True, alpha=0.2, linestyle='--', linewidth=0.4)
                 ax.set_axisbelow(True)
             if i < n - 1:
                 ax.set_xticklabels([])
             else:
-                ax.set_xlabel(labels_dict.get(var_x, var_x), fontsize=11, color='0.15')
+                ax.set_xlabel(labels_dict.get(var_x, var_x), fontsize=21, color='0.15')
             if j > 0:
                 ax.set_yticklabels([])
             else:
-                ax.set_ylabel(labels_dict.get(var_y, var_y), fontsize=11, color='0.15')
+                ax.set_ylabel(labels_dict.get(var_y, var_y), fontsize=21, color='0.15')
 
-    # Title and caption
-    dlabel = 'ALFALFA×NSA' if dataset_name.upper() == 'ALFALFA' else dataset_name.upper()
-    title = f"Distributions and pairwise correlations of the {dlabel} data used as input to the causal discovery algorithm."
-    fig.text(0.5, 0.97, title, ha='center', fontsize=12, va='top', fontweight='bold')
-    caption = "The contour levels contain 39.3, 86.5 and 98.9 per cent of the points (1, 2 and 3σ)."
-    fig.text(0.5, 0.015, caption, ha='center', fontsize=9, style='italic', color='0.35')
-    
+    # No in-image title or caption: the LaTeX figure caption carries the
+    # description and the contour-level note, avoiding duplication on the page.
+
     # Save PNG only (no PDF unless requested)
     PLOTS_DIR.mkdir(parents=True, exist_ok=True)
     out_png = PLOTS_DIR / f"corner_{dataset_name.lower()}_FINAL.png"
