@@ -9,7 +9,8 @@ dist/
 build/
 .venv/
 
-# Data files (too large for GitHub)
+# Data files (too large for GitHub, and raw survey/sim pulls)
+Data/
 *.pkl
 *.h5
 *.hdf5
