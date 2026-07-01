@@ -98,7 +98,7 @@ def _node_label(var):
     plain = PLAIN.get(var)
     if not plain:
         return var
-    return f'<{plain}<BR/><FONT POINT-SIZE="10">{var}</FONT>>'
+    return f'<{plain}<BR/><FONT POINT-SIZE="8">{var}</FONT>>'
 
 
 def main():
@@ -114,18 +114,15 @@ def main():
         df = pd.read_csv(csv)
         df = df[df["presence"] >= PRESENCE_THR]
         g = gviz.Digraph(engine="dot")
-        g.attr(rankdir="TB", splines="true", overlap="false", dpi="200")
+        g.attr(rankdir="TB", splines="true", overlap="false")
         if name == "TNG50":
-            # The TNG50 graph is the densest (15 nodes, 33 edges). Give the nodes
-            # more room and a larger label, and make the arrowheads/edges thinner,
-            # so the nodes read clearly and the arrows do not dominate the figure.
-            g.attr(ratio="0.72", ranksep="0.7", nodesep="0.5")
-            g.attr("node", shape="ellipse", fontname="Helvetica", fontsize="15",
-                   margin="0.12,0.06", penwidth="1.0")
-            g.attr("edge", arrowsize="0.5", penwidth="0.8")
-        else:
-            g.attr("node", shape="ellipse", fontsize="11", fontname="Helvetica")
-            g.attr("edge", arrowsize="0.8")
+            # The TNG50 graph has many nodes and is laid out very wide/flat by
+            # default, which makes it look small next to the squarer ALFALFA/NSA
+            # graphs. Nudge it toward a more square aspect so the three figures
+            # are visually balanced at the same printed width.
+            g.attr(ratio="0.75", ranksep="0.55", nodesep="0.35")
+        g.attr("node", shape="ellipse", fontsize="11", fontname="Helvetica")
+        g.attr("edge", arrowsize="0.8")
         # Define every node first, with a dual (plain + technical) label.
         seen = set()
         for _, r in df.iterrows():
