@@ -65,3 +65,6 @@ Results/alfalfa_nsa_fcit_improved_t7_p35.txt
 
 # Local revision notes (not part of the code repo)
 .revision/
+
+# Reanalysis drafts / prose (never in the repo)
+reanalysis/drafts/

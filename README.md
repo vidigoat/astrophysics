@@ -1,10 +1,44 @@
-# Causal Structure in Galaxies: Comparing Simulations and Observations
+# Causal Structure in Galaxies
 
-Code for the paper *"Causal Structure in Galaxies: Comparing Simulations and Observations"* by Vidit Patankar. The work uses causal discovery (the FCIT algorithm) to learn the directed relationships between galaxy properties — mass, luminosity, size, metallicity, gas content, and so on — and compares the causal structure recovered from real observations (NSA optical galaxies and ALFALFA HI-selected galaxies) against that recovered from a cosmological simulation (TNG50). Because FCIT's edge orientations are not fully deterministic, each graph is reported as a consensus over many repeated runs so the results are reproducible. The goal is to test whether simulations reproduce the same causal structure that the real universe shows.
+Analysis code for causal-discovery experiments on galaxy catalogues and cosmological
+simulations, using the FCIT algorithm (Fast Causal Inference with Targeted Testing)
+via the `py-tetrad` interface to Tetrad.
 
-## Paper
+Five data sets are processed: two observational catalogues (the NASA--Sloan Atlas and
+the gas-selected ALFALFA x NSA matched sample) and three cosmological simulations
+(TNG50, EAGLE and SIMBA). Each is reduced to a common set of first-order galaxy
+properties, run through FCIT to recover a partial ancestral graph, and compared
+across codes on a matched variable set.
 
-Full manuscript (author preprint, currently under review at *ApJ*): [paper/Patankar_Causal_Structure_in_Galaxies.pdf](paper/Patankar_Causal_Structure_in_Galaxies.pdf).
+## Layout
+
+| Path | Contents |
+|---|---|
+| `Code/DataPrep/` | Catalogue ingestion and cleaning, one script per data set |
+| `Code/FCIT/` | FCIT runs on the per-catalogue variable sets |
+| `Code/Analysis/` | Hyperparameter tuning, null tests, robustness checks |
+| `Code/Visualizations/` | Corner plots and PAG rendering |
+| `reanalysis/` | Current analysis: corrected data extraction, conditional-independence tests, cross-code comparison, figures |
+| `reanalysis/results/` | Recovered graphs, FCIT logs and figure outputs |
+| `Results/` | Consensus edge lists from the earlier per-catalogue runs |
+
+## Notes on the data
+
+Raw survey and simulation pulls are not tracked (see `.gitignore`); each `DataPrep`
+script fetches or reads from its public source. The ALFALFA x NSA cross-match is not
+redistributed here and can be rebuilt following Stiskalek et al. (2021).
+
+Two corrections in `reanalysis/` supersede the earlier `Code/` outputs. The
+IllustrisTNG `SubhaloMassType` particle-type indices are `0 = gas`, `1 = dark matter`,
+`4 = stars`; and `SubhaloStellarPhotometrics` is ordered `U, B, V, K, g, r, i, z`, so
+index 2 is Buser `V` rather than SDSS `r`. Black-hole mass is censored in TNG50 and
+SIMBA (unseeded objects sit at the catalogue floor) and is restricted to seeded
+galaxies throughout.
+
+## Requirements
+
+Python 3.11+, with `py-tetrad` (and a JVM), `numpy`, `scipy`, `pandas`, `matplotlib`
+and `networkx`.
 
 ## License
 

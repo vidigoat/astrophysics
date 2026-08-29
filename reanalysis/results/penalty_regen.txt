@@ -1,0 +1,285 @@
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-> LOG_SIGMA
+2. BH_MASS o-o STAR_METALLICITY
+3. DM_MASS o-o GAS_MASS
+4. DM_MASS o-> LOG_SIGMA
+5. DM_MASS o-> SSFR
+6. GAS_MASS o-> GAS_METALLICITY
+7. LOG_SIGMA o-o STAR_METALLICITY
+8. SSFR o-o GAS_MASS
+9. STAR_METALLICITY o-> GAS_METALLICITY
+10. STAR_METALLICITY o-> SSFR
+11. STELLAR_MASS o-o BH_MASS
+12. STELLAR_MASS o-o DM_MASS
+13. STELLAR_MASS o-> GAS_METALLICITY
+14. STELLAR_MASS o-o LOG_SIGMA
+15. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 122 ms.
+Collider orientation and edge removal time: 39 ms.
+Total time: 161 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-o DM_MASS
+2. BH_MASS o-o LOG_SIGMA
+3. BH_MASS o-o STAR_METALLICITY
+4. GAS_MASS o-> GAS_METALLICITY
+5. GAS_MASS o-o SSFR
+6. LOG_SIGMA o-o DM_MASS
+7. SSFR o-> GAS_METALLICITY
+8. STAR_METALLICITY o-> GAS_METALLICITY
+9. STAR_METALLICITY o-o LOG_SIGMA
+10. STELLAR_MASS o-o BH_MASS
+11. STELLAR_MASS o-o GAS_MASS
+12. STELLAR_MASS o-o LOG_SIGMA
+13. STELLAR_MASS o-o SSFR
+14. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 67 ms.
+Collider orientation and edge removal time: 10 ms.
+Total time: 77 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-o GAS_METALLICITY
+2. BH_MASS o-o SSFR
+3. BH_MASS o-o STAR_METALLICITY
+4. BH_MASS o-o STELLAR_MASS
+5. GAS_METALLICITY o-> GAS_MASS
+6. GAS_METALLICITY o-o SSFR
+7. LOG_SIGMA o-o BH_MASS
+8. LOG_SIGMA o-o DM_MASS
+9. LOG_SIGMA o-o STAR_METALLICITY
+10. LOG_SIGMA o-o STELLAR_MASS
+11. SSFR o-> GAS_MASS
+12. STAR_METALLICITY o-o GAS_METALLICITY
+13. STELLAR_MASS o-o DM_MASS
+14. STELLAR_MASS o-> GAS_MASS
+15. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 24 ms.
+Collider orientation and edge removal time: 8 ms.
+Total time: 32 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-> LOG_SIGMA
+2. BH_MASS o-o STAR_METALLICITY
+3. DM_MASS o-> GAS_MASS
+4. DM_MASS o-> LOG_SIGMA
+5. GAS_METALLICITY o-o SSFR
+6. LOG_SIGMA o-o STAR_METALLICITY
+7. SSFR o-> GAS_MASS
+8. STAR_METALLICITY o-o GAS_METALLICITY
+9. STELLAR_MASS o-o BH_MASS
+10. STELLAR_MASS o-o DM_MASS
+11. STELLAR_MASS o-o LOG_SIGMA
+12. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 10 ms.
+Collider orientation and edge removal time: 7 ms.
+Total time: 17 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-> DM_MASS
+2. BH_MASS o-o STAR_METALLICITY
+3. LOG_SIGMA o-> DM_MASS
+4. SSFR o-> GAS_MASS
+5. SSFR o-> GAS_METALLICITY
+6. STAR_METALLICITY o-> GAS_METALLICITY
+7. STAR_METALLICITY o-o LOG_SIGMA
+8. STELLAR_MASS o-o BH_MASS
+9. STELLAR_MASS o-> GAS_MASS
+10. STELLAR_MASS o-o LOG_SIGMA
+11. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 14 ms.
+Collider orientation and edge removal time: 11 ms.
+Total time: 25 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-o SSFR
+2. BH_MASS o-o STAR_METALLICITY
+3. DM_MASS o-o STELLAR_MASS
+4. GAS_METALLICITY o-> GAS_MASS
+5. SSFR o-> GAS_METALLICITY
+6. STAR_METALLICITY o-> GAS_METALLICITY
+7. STAR_METALLICITY o-o LOG_SIGMA
+8. STELLAR_MASS o-o BH_MASS
+9. STELLAR_MASS o-> GAS_MASS
+10. STELLAR_MASS o-o LOG_SIGMA
+11. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 9 ms.
+Collider orientation and edge removal time: 5 ms.
+Total time: 14 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-o STAR_METALLICITY
+2. BH_MASS o-o STELLAR_MASS
+3. DM_MASS o-> GAS_MASS
+4. LOG_SIGMA o-o BH_MASS
+5. LOG_SIGMA o-o DM_MASS
+6. LOG_SIGMA o-> STELLAR_MASS
+7. SSFR o-> GAS_MASS
+8. STAR_METALLICITY o-o GAS_METALLICITY
+9. STAR_METALLICITY o-> STELLAR_MASS
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 8 ms.
+Collider orientation and edge removal time: 5 ms.
+Total time: 13 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. DM_MASS o-o BH_MASS
+2. LOG_SIGMA o-o DM_MASS
+3. LOG_SIGMA o-o STAR_METALLICITY
+4. SSFR o-> GAS_MASS
+5. SSFR o-o GAS_METALLICITY
+6. STELLAR_MASS o-> GAS_MASS
+7. STELLAR_MASS o-o LOG_SIGMA
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 6 ms.
+Collider orientation and edge removal time: 3 ms.
+Total time: 9 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-o SSFR
+2. DM_MASS o-o STELLAR_MASS
+3. SSFR o-> GAS_METALLICITY
+4. STAR_METALLICITY o-> GAS_METALLICITY
+5. STAR_METALLICITY o-o LOG_SIGMA
+6. STELLAR_MASS o-o BH_MASS
+7. STELLAR_MASS o-o LOG_SIGMA
+8. STELLAR_MASS o-o STAR_METALLICITY
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 6 ms.
+Collider orientation and edge removal time: 5 ms.
+Total time: 11 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. BH_MASS o-o STAR_METALLICITY
+2. BH_MASS o-o STELLAR_MASS
+3. DM_MASS o-> GAS_MASS
+4. LOG_SIGMA o-o BH_MASS
+5. LOG_SIGMA o-o DM_MASS
+6. LOG_SIGMA o-> STELLAR_MASS
+7. SSFR o-> GAS_MASS
+8. STAR_METALLICITY o-o GAS_METALLICITY
+9. STAR_METALLICITY o-> STELLAR_MASS
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 7 ms.
+Collider orientation and edge removal time: 5 ms.
+Total time: 12 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. DM_MASS o-o BH_MASS
+2. LOG_SIGMA o-o DM_MASS
+3. LOG_SIGMA o-o STAR_METALLICITY
+4. SSFR o-o GAS_METALLICITY
+5. STELLAR_MASS o-o GAS_MASS
+6. STELLAR_MASS o-o LOG_SIGMA
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 5 ms.
+Collider orientation and edge removal time: 4 ms.
+Total time: 9 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+STELLAR_MASS;DM_MASS;BH_MASS;GAS_MASS;LOG_SIGMA;STAR_METALLICITY;GAS_METALLICITY;SSFR
+
+Graph Edges:
+1. DM_MASS o-o STELLAR_MASS
+2. GAS_METALLICITY o-o SSFR
+3. STAR_METALLICITY o-o GAS_METALLICITY
+4. STELLAR_MASS o-o BH_MASS
+5. STELLAR_MASS o-o LOG_SIGMA
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 3 ms.
+Collider orientation and edge removal time: 3 ms.
+Total time: 6 ms.
+matched N = 3667 per code, truncation 7
+
+  p  edges (T/E/S)   union present in all 3  invariant
+  3  15/14/15           21             10          0
+  5  12/11/11           16              7          0
+  8  9/7/8              15              1          0
+ 12  9/6/5              14              1          0

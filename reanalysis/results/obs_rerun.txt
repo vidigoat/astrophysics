@@ -1,0 +1,166 @@
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+COLOR_U_R;ELPETRO_ABSMAG_R;ELPETRO_B300;ELPETRO_BA;ELPETRO_MASS;ELPETRO_METS;ELPETRO_MTOL;ELPETRO_TH50_R;SERSIC_N;ZDIST
+
+Graph Edges:
+1. COLOR_U_R o-o ELPETRO_B300
+2. COLOR_U_R o-o ELPETRO_METS
+3. COLOR_U_R o-o ELPETRO_MTOL
+4. ELPETRO_MASS o-o ELPETRO_ABSMAG_R
+5. ELPETRO_METS o-o ELPETRO_B300
+6. ELPETRO_METS o-o ELPETRO_MTOL
+7. ELPETRO_MTOL o-> ELPETRO_ABSMAG_R
+8. ELPETRO_MTOL o-o ELPETRO_B300
+9. ELPETRO_MTOL o-> ELPETRO_MASS
+10. ELPETRO_TH50_R o-o ELPETRO_BA
+11. ELPETRO_TH50_R o-> ELPETRO_MASS
+12. ELPETRO_TH50_R o-o SERSIC_N
+13. SERSIC_N o-o COLOR_U_R
+14. SERSIC_N o-> ELPETRO_MASS
+15. ZDIST o-> ELPETRO_ABSMAG_R
+16. ZDIST o-> ELPETRO_MASS
+17. ZDIST o-o ELPETRO_TH50_R
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 444 ms.
+Collider orientation and edge removal time: 122 ms.
+Total time: 566 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+COLOR_U_R;ELPETRO_ABSMAG_R;ELPETRO_B300;ELPETRO_BA;ELPETRO_MASS;ELPETRO_METS;ELPETRO_TH50_R;SERSIC_N;ZDIST
+
+Graph Edges:
+1. COLOR_U_R o-> ELPETRO_ABSMAG_R
+2. COLOR_U_R o-o ELPETRO_B300
+3. COLOR_U_R o-o ELPETRO_MASS
+4. COLOR_U_R o-o ELPETRO_METS
+5. ELPETRO_ABSMAG_R o-> ELPETRO_MASS
+6. ELPETRO_B300 o-> ELPETRO_MASS
+7. ELPETRO_BA o-> ELPETRO_ABSMAG_R
+8. ELPETRO_METS o-o ELPETRO_B300
+9. ELPETRO_TH50_R o-> ELPETRO_ABSMAG_R
+10. ELPETRO_TH50_R o-o ELPETRO_BA
+11. ELPETRO_TH50_R o-o SERSIC_N
+12. SERSIC_N o-o COLOR_U_R
+13. ZDIST o-> ELPETRO_ABSMAG_R
+14. ZDIST o-o ELPETRO_TH50_R
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 246 ms.
+Collider orientation and edge removal time: 67 ms.
+Total time: 313 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+BARYONIC_MASS;COLOR_U_R;ELPETRO_ABSMAG_R;ELPETRO_B300;ELPETRO_BA;ELPETRO_MASS;ELPETRO_METS;ELPETRO_MTOL;ELPETRO_TH50_R;SERSIC_N;W50;ZDIST;logMH
+
+Graph Edges:
+1. BARYONIC_MASS o-o ELPETRO_ABSMAG_R
+2. BARYONIC_MASS o-> ELPETRO_MASS
+3. BARYONIC_MASS o-o logMH
+4. COLOR_U_R o-> ELPETRO_B300
+5. ELPETRO_ABSMAG_R o-> ELPETRO_MASS
+6. ELPETRO_MASS o-o logMH
+7. ELPETRO_METS o-> ELPETRO_B300
+8. ELPETRO_MTOL o-o COLOR_U_R
+9. ELPETRO_MTOL o-> ELPETRO_MASS
+10. ELPETRO_TH50_R o-> ZDIST
+11. W50 o-o BARYONIC_MASS
+12. logMH o-> ZDIST
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 18 ms.
+Collider orientation and edge removal time: 9 ms.
+Total time: 27 ms.
+===Starting FCIT===
+Done with collider orientations, graph = Graph Nodes:
+COLOR_U_R;ELPETRO_ABSMAG_R;ELPETRO_B300;ELPETRO_BA;ELPETRO_MASS;ELPETRO_METS;ELPETRO_TH50_R;SERSIC_N;W50;ZDIST;logMH
+
+Graph Edges:
+1. COLOR_U_R o-> ELPETRO_MASS
+2. ELPETRO_ABSMAG_R o-> ELPETRO_MASS
+3. ELPETRO_B300 o-o COLOR_U_R
+4. ELPETRO_METS o-o ELPETRO_B300
+5. ELPETRO_TH50_R o-> ZDIST
+6. W50 o-o logMH
+7. logMH o-o ELPETRO_ABSMAG_R
+8. logMH o-> ZDIST
+
+
+
+Round: 1
+FCIT finished.
+BOSS/GRaSP time: 9 ms.
+Collider orientation and edge removal time: 6 ms.
+Total time: 15 ms.
+
+=== NSA : WITH derived quantities ===
+    10 variables, N=484539, 17 edges, 7 oriented
+      COLOR_U_R            o-o  ELPETRO_B300
+      COLOR_U_R            o-o  ELPETRO_METS
+      COLOR_U_R            o-o  ELPETRO_MTOL
+      ELPETRO_MASS         -->  ELPETRO_ABSMAG_R   <-- DEFINITIONAL
+      ELPETRO_METS         o-o  ELPETRO_B300
+      ELPETRO_METS         o-o  ELPETRO_MTOL
+      ELPETRO_MTOL         -->  ELPETRO_ABSMAG_R
+      ELPETRO_MTOL         -->  ELPETRO_MASS   <-- DEFINITIONAL
+      ELPETRO_MTOL         o-o  ELPETRO_B300
+      ELPETRO_TH50_R       o->  ELPETRO_MASS
+      ELPETRO_TH50_R       o-o  ELPETRO_BA
+      ELPETRO_TH50_R       o-o  SERSIC_N
+      SERSIC_N             -->  ELPETRO_MASS
+      SERSIC_N             o-o  COLOR_U_R
+      ZDIST                -->  ELPETRO_ABSMAG_R
+      ZDIST                o->  ELPETRO_MASS
+      ZDIST                o-o  ELPETRO_TH50_R
+
+=== NSA : WITHOUT derived quantities ===
+    9 variables, N=484539, 14 edges, 7 oriented
+      COLOR_U_R            -->  ELPETRO_ABSMAG_R
+      COLOR_U_R            -->  ELPETRO_MASS
+      COLOR_U_R            o-o  ELPETRO_B300
+      COLOR_U_R            o-o  ELPETRO_METS
+      ELPETRO_ABSMAG_R     -->  ELPETRO_MASS   <-- DEFINITIONAL
+      ELPETRO_B300         o->  ELPETRO_MASS
+      ELPETRO_BA           o->  ELPETRO_ABSMAG_R
+      ELPETRO_METS         o-o  ELPETRO_B300
+      ELPETRO_TH50_R       -->  ELPETRO_ABSMAG_R
+      ELPETRO_TH50_R       o-o  ELPETRO_BA
+      ELPETRO_TH50_R       o-o  SERSIC_N
+      SERSIC_N             o-o  COLOR_U_R
+      ZDIST                o->  ELPETRO_ABSMAG_R
+      ZDIST                o-o  ELPETRO_TH50_R
+
+=== ALFALFA : WITH derived quantities ===
+    13 variables, N=20569, 12 edges, 9 oriented
+      BARYONIC_MASS        -->  logMH
+      BARYONIC_MASS        o->  ELPETRO_MASS   <-- DEFINITIONAL
+      BARYONIC_MASS        o-o  ELPETRO_ABSMAG_R
+      COLOR_U_R            o->  ELPETRO_B300
+      ELPETRO_ABSMAG_R     o->  ELPETRO_MASS   <-- DEFINITIONAL
+      ELPETRO_MASS         -->  logMH
+      ELPETRO_METS         o->  ELPETRO_B300
+      ELPETRO_MTOL         o->  ELPETRO_MASS   <-- DEFINITIONAL
+      ELPETRO_MTOL         o-o  COLOR_U_R
+      ELPETRO_TH50_R       o->  ZDIST
+      W50                  o-o  BARYONIC_MASS
+      logMH                -->  ZDIST
+
+=== ALFALFA : WITHOUT derived quantities ===
+    11 variables, N=20569, 8 edges, 4 oriented
+      COLOR_U_R            o->  ELPETRO_MASS
+      ELPETRO_ABSMAG_R     o->  ELPETRO_MASS   <-- DEFINITIONAL
+      ELPETRO_B300         o-o  COLOR_U_R
+      ELPETRO_METS         o-o  ELPETRO_B300
+      ELPETRO_TH50_R       o->  ZDIST
+      W50                  o-o  logMH
+      logMH                o->  ZDIST
+      logMH                o-o  ELPETRO_ABSMAG_R
