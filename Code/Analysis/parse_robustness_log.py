@@ -39,40 +39,93 @@ MARKS_CSV = os.path.join(REPO_ROOT, "Results", "hyperparameter_robustness_marks.
 
 # Must mirror Hyperparameter_Robustness_Real_Data.py.
 DATASETS = [
-    ("ALFALFA_NSA", 7, 35, 13, [
-        ("ELPETRO_MASS",  "ELPETRO_ABSMAG_R"),
-        ("logMH",         "ELPETRO_MASS"),
-        ("W50",           "logMH"),
-    ]),
-    ("NSA", 14, 50, 10, [
-        ("ELPETRO_MASS",     "ELPETRO_ABSMAG_R"),
-        ("ELPETRO_ABSMAG_R", "ELPETRO_TH50_R"),
-        ("ELPETRO_MTOL",     "ELPETRO_ABSMAG_R"),
-    ]),
-    ("TNG50", 7, 15, None, [
-        ("STELLAR_MASS", "BARYONIC_MASS"),
-        ("STELLAR_MASS", "HALFMASS_RAD"),
-        ("GAS_MASS",     "BH_MASS"),
-        ("DM_MASS",      "GAS_METALLICITY"),
-    ]),
+    (
+        "ALFALFA_NSA",
+        7,
+        35,
+        13,
+        [
+            ("ELPETRO_MASS", "ELPETRO_ABSMAG_R"),
+            ("logMH", "ELPETRO_MASS"),
+            ("W50", "logMH"),
+        ],
+    ),
+    (
+        "NSA",
+        14,
+        50,
+        10,
+        [
+            ("ELPETRO_MASS", "ELPETRO_ABSMAG_R"),
+            ("ELPETRO_ABSMAG_R", "ELPETRO_TH50_R"),
+            ("ELPETRO_MTOL", "ELPETRO_ABSMAG_R"),
+        ],
+    ),
+    (
+        "TNG50",
+        7,
+        15,
+        None,
+        [
+            ("STELLAR_MASS", "BARYONIC_MASS"),
+            ("STELLAR_MASS", "HALFMASS_RAD"),
+            ("GAS_MASS", "BH_MASS"),
+            ("DM_MASS", "GAS_METALLICITY"),
+        ],
+    ),
 ]
 
 # Identify dataset by the set of node names in the 'Graph Nodes:' line.
 DATASET_KEYS = {
-    "ALFALFA_NSA": frozenset({
-        "BARYONIC_MASS", "COLOR_U_R", "ELPETRO_B300", "SERSIC_N", "ELPETRO_METS",
-        "ELPETRO_MTOL", "ELPETRO_BA", "ELPETRO_TH50_R", "ZDIST", "logMH",
-        "ELPETRO_MASS", "ELPETRO_ABSMAG_R", "W50",
-    }),
-    "NSA": frozenset({
-        "COLOR_U_R", "ELPETRO_B300", "SERSIC_N", "ELPETRO_METS", "ELPETRO_MTOL",
-        "ELPETRO_BA", "ELPETRO_TH50_R", "ZDIST", "ELPETRO_MASS", "ELPETRO_ABSMAG_R",
-    }),
-    "TNG50": frozenset({
-        "DM_MASS", "STELLAR_MASS", "GAS_MASS", "BH_MASS", "BARYONIC_MASS",
-        "HALFMASS_RAD", "VEL_DISP", "VMAX", "GAS_METALLICITY", "STAR_METALLICITY",
-        "PHOTOMETRIC_U", "PHOTOMETRIC_R", "SFR", "COLOUR",
-    }),
+    "ALFALFA_NSA": frozenset(
+        {
+            "BARYONIC_MASS",
+            "COLOR_U_R",
+            "ELPETRO_B300",
+            "SERSIC_N",
+            "ELPETRO_METS",
+            "ELPETRO_MTOL",
+            "ELPETRO_BA",
+            "ELPETRO_TH50_R",
+            "ZDIST",
+            "logMH",
+            "ELPETRO_MASS",
+            "ELPETRO_ABSMAG_R",
+            "W50",
+        }
+    ),
+    "NSA": frozenset(
+        {
+            "COLOR_U_R",
+            "ELPETRO_B300",
+            "SERSIC_N",
+            "ELPETRO_METS",
+            "ELPETRO_MTOL",
+            "ELPETRO_BA",
+            "ELPETRO_TH50_R",
+            "ZDIST",
+            "ELPETRO_MASS",
+            "ELPETRO_ABSMAG_R",
+        }
+    ),
+    "TNG50": frozenset(
+        {
+            "DM_MASS",
+            "STELLAR_MASS",
+            "GAS_MASS",
+            "BH_MASS",
+            "BARYONIC_MASS",
+            "HALFMASS_RAD",
+            "VEL_DISP",
+            "VMAX",
+            "GAS_METALLICITY",
+            "STAR_METALLICITY",
+            "PHOTOMETRIC_U",
+            "PHOTOMETRIC_R",
+            "SFR",
+            "COLOUR",
+        }
+    ),
 }
 
 
@@ -138,8 +191,9 @@ def parse_log_into_graphs(log_text: str) -> List[Tuple[set[str], List[Tuple[str,
     return graphs
 
 
-def classify_mark(observed: str | None, expected_src: str, expected_dst: str,
-                  graph_edges: List[Tuple[str, str, str]]) -> Tuple[str, str]:
+def classify_mark(
+    observed: str | None, expected_src: str, expected_dst: str, graph_edges: List[Tuple[str, str, str]]
+) -> Tuple[str, str]:
     """Given the EXPECTED direction (src -> dst), look up the edge in the graph
     and return (raw_mark, classification).
 
@@ -159,9 +213,12 @@ def classify_mark(observed: str | None, expected_src: str, expected_dst: str,
             break
         if a == expected_dst and b == expected_src:
             flip = {
-                "-->": "<--", "<--": "-->",
-                "o->": "<-o", "<-o": "o->",
-                "o-o": "o-o", "<->": "<->",
+                "-->": "<--",
+                "<--": "-->",
+                "o->": "<-o",
+                "<-o": "o->",
+                "o-o": "o-o",
+                "<->": "<->",
             }.get(mark, mark)
             raw = flip
             break
@@ -193,28 +250,32 @@ def main() -> None:
     g_idx = 0
     for ds_name, t0, p0, _, key_edges in DATASETS:
         cells = grid_for(t0, p0)
-        for (t, p) in cells:
+        for t, p in cells:
             if g_idx >= len(graphs):
                 print(f"[warn] ran out of graphs at {ds_name} t={t} p={p}")
                 break
             nodes, edges = graphs[g_idx]
             guessed = identify_dataset(nodes)
             if guessed != ds_name:
-                print(f"[warn] graph #{g_idx} dataset mismatch: "
-                      f"expected {ds_name}, log shows {guessed} ({len(nodes)} nodes)")
-            for (src, dst) in key_edges:
+                print(
+                    f"[warn] graph #{g_idx} dataset mismatch: "
+                    f"expected {ds_name}, log shows {guessed} ({len(nodes)} nodes)"
+                )
+            for src, dst in key_edges:
                 raw, cls = classify_mark(None, src, dst, edges)
-                rows.append({
-                    "dataset": ds_name,
-                    "trunc": t,
-                    "penalty": p,
-                    "is_baseline": (t == t0 and p == p0),
-                    "src": src,
-                    "dst": dst,
-                    "raw_mark": raw,
-                    "class": cls,
-                    "n_edges": len(edges),
-                })
+                rows.append(
+                    {
+                        "dataset": ds_name,
+                        "trunc": t,
+                        "penalty": p,
+                        "is_baseline": (t == t0 and p == p0),
+                        "src": src,
+                        "dst": dst,
+                        "raw_mark": raw,
+                        "class": cls,
+                        "n_edges": len(edges),
+                    }
+                )
             g_idx += 1
 
     df = pd.DataFrame(rows)
@@ -225,16 +286,18 @@ def main() -> None:
     for ds_name, t0, p0, _, key_edges in DATASETS:
         sub = df[df["dataset"] == ds_name]
         print(f"=== {ds_name} (baseline t={t0}, p={p0}) ===")
-        for (src, dst) in key_edges:
+        for src, dst in key_edges:
             e = sub[(sub["src"] == src) & (sub["dst"] == dst)]
             counts = e["class"].value_counts().to_dict()
             base = e[e["is_baseline"]]
             base_mark = base["raw_mark"].iloc[0] if not base.empty else "?"
-            print(f"  {src:>20} -> {dst:<22}  baseline={base_mark!r:>8}  "
-                  f"COMPATIBLE={counts.get('COMPATIBLE',0)}/9  "
-                  f"REVERSED={counts.get('REVERSED',0)}/9  "
-                  f"UNDIRECTED={counts.get('UNDIRECTED',0)}/9  "
-                  f"MISSING={counts.get('MISSING',0)}/9")
+            print(
+                f"  {src:>20} -> {dst:<22}  baseline={base_mark!r:>8}  "
+                f"COMPATIBLE={counts.get('COMPATIBLE',0)}/9  "
+                f"REVERSED={counts.get('REVERSED',0)}/9  "
+                f"UNDIRECTED={counts.get('UNDIRECTED',0)}/9  "
+                f"MISSING={counts.get('MISSING',0)}/9"
+            )
         print()
 
 

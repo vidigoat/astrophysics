@@ -15,6 +15,7 @@ Every variable is standardised within each sample; heavy-tailed positives (size,
 SFR) are log-scaled first; each sample is subsampled to a common N so graph
 differences cannot be attributed to sample size. Outputs Data/match{A,B}_*.pkl.
 """
+
 import os
 import pickle
 import numpy as np
@@ -70,26 +71,39 @@ def standardise(d, logvars=()):
 
 def obs_A(nsa):
     return {
-        "stellar_mass": nsa["ELPETRO_MASS"], "r_mag": nsa["ELPETRO_ABSMAG_R"],
-        "colour": nsa["COLOR_U_R"], "metallicity": nsa["ELPETRO_METS"],
+        "stellar_mass": nsa["ELPETRO_MASS"],
+        "r_mag": nsa["ELPETRO_ABSMAG_R"],
+        "colour": nsa["COLOR_U_R"],
+        "metallicity": nsa["ELPETRO_METS"],
         "size": nsa_physical_size(nsa["ELPETRO_TH50_R"], nsa["ZDIST"]),
     }
 
 
 def sim_A(s):
     return {
-        "stellar_mass": s["STELLAR_MASS"], "r_mag": s["PHOTOMETRIC_R"],
-        "colour": s["COLOUR"], "metallicity": s["STAR_METALLICITY"],
+        "stellar_mass": s["STELLAR_MASS"],
+        "r_mag": s["PHOTOMETRIC_R"],
+        "colour": s["COLOUR"],
+        "metallicity": s["STAR_METALLICITY"],
         "size": s["HALFMASS_RAD"],
     }
 
 
-BNAME = {"DM_MASS": "halo_mass", "STELLAR_MASS": "stellar_mass",
-         "GAS_MASS": "gas_mass", "BH_MASS": "bh_mass",
-         "BARYONIC_MASS": "baryon_mass", "HALFMASS_RAD": "size",
-         "VEL_DISP": "veldisp", "STAR_METALLICITY": "Z_star",
-         "GAS_METALLICITY": "Z_gas", "PHOTOMETRIC_R": "r_mag",
-         "PHOTOMETRIC_U": "u_mag", "COLOUR": "colour", "SFR": "sfr"}
+BNAME = {
+    "DM_MASS": "halo_mass",
+    "STELLAR_MASS": "stellar_mass",
+    "GAS_MASS": "gas_mass",
+    "BH_MASS": "bh_mass",
+    "BARYONIC_MASS": "baryon_mass",
+    "HALFMASS_RAD": "size",
+    "VEL_DISP": "veldisp",
+    "STAR_METALLICITY": "Z_star",
+    "GAS_METALLICITY": "Z_gas",
+    "PHOTOMETRIC_R": "r_mag",
+    "PHOTOMETRIC_U": "u_mag",
+    "COLOUR": "colour",
+    "SFR": "sfr",
+}
 
 
 def sim_B(s):
@@ -107,8 +121,7 @@ def main():
     for n, s in sims.items():
         jobs.append((f"matchB_{n}", sim_B(s), ("size", "sfr")))
 
-    print("NSA physical size (kpc): median %.2f"
-          % np.nanmedian(obs_A(nsa)["size"]))
+    print("NSA physical size (kpc): median %.2f" % np.nanmedian(obs_A(nsa)["size"]))
     for outname, d, logvars in jobs:
         m = finite_mask(list(d.values()))
         d = {k: np.asarray(v, float)[m] for k, v in d.items()}

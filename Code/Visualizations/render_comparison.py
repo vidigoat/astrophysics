@@ -12,6 +12,7 @@ Render the simulation-comparison PAGs from Simulation_Comparison.py.
                   grey         = undirected in all three (robust, direction unresolved)
                   orange       = present in all three but directions DIFFER (model-dependent)
 """
+
 import os
 import pandas as pd
 import graphviz as gviz
@@ -21,20 +22,27 @@ RESULTS = os.path.join(REPO, "Results")
 PLOTS = os.path.join(REPO, "Plots")
 
 LABELS = {
-    "stellar_mass": "Stellar mass", "r_mag": "r-band luminosity",
-    "colour": "Colour (U-R)", "metallicity": "Stellar metallicity",
-    "size": "Size", "halo_mass": "Halo mass", "gas_mass": "Gas mass",
-    "bh_mass": "Black-hole mass", "baryon_mass": "Baryonic mass",
-    "veldisp": "Velocity dispersion", "Z_star": "Stellar metallicity",
-    "Z_gas": "Gas metallicity", "u_mag": "u-band luminosity",
+    "stellar_mass": "Stellar mass",
+    "r_mag": "r-band luminosity",
+    "colour": "Colour (U-R)",
+    "metallicity": "Stellar metallicity",
+    "size": "Size",
+    "halo_mass": "Halo mass",
+    "gas_mass": "Gas mass",
+    "bh_mass": "Black-hole mass",
+    "baryon_mass": "Baryonic mass",
+    "veldisp": "Velocity dispersion",
+    "Z_star": "Stellar metallicity",
+    "Z_gas": "Gas metallicity",
+    "u_mag": "u-band luminosity",
     "sfr": "Star formation",
 }
 _STYLE = {
-    "-->": dict(dir="both", arrowtail="none",  arrowhead="normal"),
-    "o->": dict(dir="both", arrowtail="odot",  arrowhead="normal"),
+    "-->": dict(dir="both", arrowtail="none", arrowhead="normal"),
+    "o->": dict(dir="both", arrowtail="odot", arrowhead="normal"),
     "<--": dict(dir="both", arrowtail="normal", arrowhead="none"),
     "<-o": dict(dir="both", arrowtail="normal", arrowhead="odot"),
-    "o-o": dict(dir="both", arrowtail="odot",  arrowhead="odot"),
+    "o-o": dict(dir="both", arrowtail="odot", arrowhead="odot"),
     "<->": dict(dir="both", arrowtail="normal", arrowhead="normal"),
 }
 
@@ -53,7 +61,8 @@ def render_simple(name, out):
     for _, r in df.iterrows():
         for v in (r["var_a"], r["var_b"]):
             if v not in seen:
-                seen.add(v); g.node(v, label=_lab(v))
+                seen.add(v)
+                g.node(v, label=_lab(v))
     for _, r in df.iterrows():
         g.edge(r["var_a"], r["var_b"], **_STYLE.get(r["consensus_mark"], _STYLE["o-o"]))
     g.render(filename=out, directory=PLOTS, format="png", cleanup=True)
@@ -71,7 +80,8 @@ def render_backbone(out):
     for _, r in inv.iterrows():
         for v in (r["var_a"], r["var_b"]):
             if v not in seen:
-                seen.add(v); g.node(v, label=_lab(v))
+                seen.add(v)
+                g.node(v, label=_lab(v))
     for _, r in inv.iterrows():
         cls = r["edge_class"]
         if cls == "invariant_oriented":
@@ -79,14 +89,23 @@ def render_backbone(out):
         elif cls == "invariant_undirected":
             g.edge(r["var_a"], r["var_b"], color="gray55", dir="none")
         else:  # invariant_skeleton: codes disagree on direction
-            g.edge(r["var_a"], r["var_b"], color="darkorange2", penwidth="2.2",
-                   dir="both", arrowtail="normal", arrowhead="normal")
+            g.edge(
+                r["var_a"],
+                r["var_b"],
+                color="darkorange2",
+                penwidth="2.2",
+                dir="both",
+                arrowtail="normal",
+                arrowhead="normal",
+            )
     g.render(filename=out, directory=PLOTS, format="png", cleanup=True)
     n_o = (inv["edge_class"] == "invariant_oriented").sum()
     n_u = (inv["edge_class"] == "invariant_undirected").sum()
     n_s = (inv["edge_class"] == "invariant_conflict").sum()
-    print(f"backbone: {len(inv)} edges in all 3 codes -> "
-          f"{n_o} same-direction (black), {n_u} undirected (grey), {n_s} dir-conflict (orange)")
+    print(
+        f"backbone: {len(inv)} edges in all 3 codes -> "
+        f"{n_o} same-direction (black), {n_u} undirected (grey), {n_s} dir-conflict (orange)"
+    )
 
 
 def main():

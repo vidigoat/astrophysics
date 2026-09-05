@@ -9,6 +9,7 @@ Rock-solid re-analysis addressing the audit:
     at p = 6, 8, 12 on the N=10,000 matched intrinsic samples.
 Outputs: Results/null_disjoint.csv, Results/penalty_table.csv  (+ printed summary)
 """
+
 import os, pickle
 from collections import Counter
 import numpy as np
@@ -16,21 +17,34 @@ import pandas as pd
 import pytetrad.tools.TetradSearch as ts
 
 REPO = "/Users/vidigoat/astrophysics"
-DATA = os.path.join(REPO, "Data"); RESULTS = os.path.join(REPO, "Results")
+DATA = os.path.join(REPO, "Data")
+RESULTS = os.path.join(REPO, "Results")
 ALPHA, PRES, ORI, NRUN, T, P = 0.01, 0.50, 0.60, 50, 7, 8
 N_HALF, N_FULL = 5000, 10000
 CODES = ["TNG50", "EAGLE", "SIMBA"]
-BN = {"DM_MASS": "halo_mass", "STELLAR_MASS": "stellar_mass", "GAS_MASS": "gas_mass",
-      "BH_MASS": "bh_mass", "BARYONIC_MASS": "baryon_mass", "HALFMASS_RAD": "size",
-      "VEL_DISP": "veldisp", "STAR_METALLICITY": "Z_star", "GAS_METALLICITY": "Z_gas",
-      "PHOTOMETRIC_R": "r_mag", "PHOTOMETRIC_U": "u_mag", "COLOUR": "colour", "SFR": "sfr"}
+BN = {
+    "DM_MASS": "halo_mass",
+    "STELLAR_MASS": "stellar_mass",
+    "GAS_MASS": "gas_mass",
+    "BH_MASS": "bh_mass",
+    "BARYONIC_MASS": "baryon_mass",
+    "HALFMASS_RAD": "size",
+    "VEL_DISP": "veldisp",
+    "STAR_METALLICITY": "Z_star",
+    "GAS_METALLICITY": "Z_gas",
+    "PHOTOMETRIC_R": "r_mag",
+    "PHOTOMETRIC_U": "u_mag",
+    "COLOUR": "colour",
+    "SFR": "sfr",
+}
 _M = ("<->", "-->", "<--", "o->", "<-o", "o-o")
 _FL = {"-->": "<--", "<--": "-->", "o->": "<-o", "<-o": "o->", "o-o": "o-o", "<->": "<->"}
 _dir = lambda m: "fwd" if m in ("-->", "o->") else "rev" if m in ("<--", "<-o") else "und"
 
 
 def zc(x):
-    x = np.asarray(x, float); s = np.std(x)
+    x = np.asarray(x, float)
+    s = np.std(x)
     return (x - np.mean(x)) / (s if s > 0 else 1.0)
 
 
@@ -58,7 +72,8 @@ def parse(g):
     for raw in g.split("\n"):
         s = raw.strip()
         if s.startswith("Graph Edges"):
-            inb = True; continue
+            inb = True
+            continue
         if not inb:
             continue
         if s.startswith("Graph "):
@@ -66,15 +81,18 @@ def parse(g):
         for mk in _M:
             if mk in s:
                 body = s.split(".", 1)[1].strip() if "." in s.split(mk)[0] else s
-                l, r = body.split(mk, 1); a, b = l.strip(), r.strip()
-                edges.append(((a, b), mk) if a <= b else ((b, a), _FL[mk])); break
+                l, r = body.split(mk, 1)
+                a, b = l.strip(), r.strip()
+                edges.append(((a, b), mk) if a <= b else ((b, a), _FL[mk]))
+                break
     return edges
 
 
 def consensus(df, p=P):
     pres, marks = Counter(), {}
     for _ in range(NRUN):
-        s = ts.TetradSearch(df); s.set_verbose(False)
+        s = ts.TetradSearch(df)
+        s.set_verbose(False)
         s.use_basis_function_lrt(truncation_limit=T, alpha=ALPHA)
         s.use_basis_function_bic(truncation_limit=T, penalty_discount=p)
         s.run_fcit()
@@ -133,7 +151,7 @@ def main():
     for c in CODES:
         s, n = std[c]
         idx = np.random.RandomState(1).choice(n, min(n, 2 * N_HALF), replace=False)
-        h1, h2 = idx[:N_HALF], idx[N_HALF:2 * N_HALF]
+        h1, h2 = idx[:N_HALF], idx[N_HALF : 2 * N_HALF]
         assert len(set(h1) & set(h2)) == 0, "halves overlap!"
         halves[(c, 1)] = consensus(frame(s, h1))
         halves[(c, 2)] = consensus(frame(s, h2))
@@ -144,17 +162,32 @@ def main():
     for c in CODES:
         v = agree_vec(halves[(c, 1)], halves[(c, 2)])
         fr, lo, hi = boot_ci(v)
-        rows.append(dict(comparison=f"within_{c}", n_common=len(v), same=int(v.sum()),
-                         frac=round(fr, 3), ci_lo=round(lo, 3), ci_hi=round(hi, 3)))
+        rows.append(
+            dict(
+                comparison=f"within_{c}",
+                n_common=len(v),
+                same=int(v.sum()),
+                frac=round(fr, 3),
+                ci_lo=round(lo, 3),
+                ci_hi=round(hi, 3),
+            )
+        )
         print(f"  {c}: {int(v.sum())}/{len(v)} = {fr:.2f}  [95% {lo:.2f}-{hi:.2f}]")
     print("=== CROSS-CODE (half-1 of each, disjoint by construction) ===")
     for i in range(3):
         for j in range(i + 1, 3):
             v = agree_vec(halves[(CODES[i], 1)], halves[(CODES[j], 1)])
             fr, lo, hi = boot_ci(v)
-            rows.append(dict(comparison=f"cross_{CODES[i]}_{CODES[j]}", n_common=len(v),
-                             same=int(v.sum()), frac=round(fr, 3),
-                             ci_lo=round(lo, 3), ci_hi=round(hi, 3)))
+            rows.append(
+                dict(
+                    comparison=f"cross_{CODES[i]}_{CODES[j]}",
+                    n_common=len(v),
+                    same=int(v.sum()),
+                    frac=round(fr, 3),
+                    ci_lo=round(lo, 3),
+                    ci_hi=round(hi, 3),
+                )
+            )
             print(f"  {CODES[i]}-{CODES[j]}: {int(v.sum())}/{len(v)} = {fr:.2f}  [95% {lo:.2f}-{hi:.2f}]")
     pd.DataFrame(rows).to_csv(os.path.join(RESULTS, "null_disjoint.csv"), index=False)
 
@@ -173,14 +206,25 @@ def main():
     for p in (6, 8, 12):
         graphs = {c: consensus(frame(std[c][0], full[c]), p=p) for c in CODES}
         cnt, union = classify(graphs)
-        prows.append(dict(penalty=p, TNG50=len(graphs["TNG50"]), EAGLE=len(graphs["EAGLE"]),
-                          SIMBA=len(graphs["SIMBA"]), union=union,
-                          invariant=cnt["invariant"], conflict=cnt["conflict"],
-                          majority=cnt["majority"], code_specific=cnt["code_specific"],
-                          present_all3=cnt["invariant"] + cnt["conflict"]))
-        print(f"  p={p}: edges {[len(graphs[c]) for c in CODES]} union={union} "
-              f"inv={cnt['invariant']} conf={cnt['conflict']} maj={cnt['majority']} "
-              f"cs={cnt['code_specific']} (present-in-3={cnt['invariant']+cnt['conflict']})")
+        prows.append(
+            dict(
+                penalty=p,
+                TNG50=len(graphs["TNG50"]),
+                EAGLE=len(graphs["EAGLE"]),
+                SIMBA=len(graphs["SIMBA"]),
+                union=union,
+                invariant=cnt["invariant"],
+                conflict=cnt["conflict"],
+                majority=cnt["majority"],
+                code_specific=cnt["code_specific"],
+                present_all3=cnt["invariant"] + cnt["conflict"],
+            )
+        )
+        print(
+            f"  p={p}: edges {[len(graphs[c]) for c in CODES]} union={union} "
+            f"inv={cnt['invariant']} conf={cnt['conflict']} maj={cnt['majority']} "
+            f"cs={cnt['code_specific']} (present-in-3={cnt['invariant']+cnt['conflict']})"
+        )
     pd.DataFrame(prows).to_csv(os.path.join(RESULTS, "penalty_table.csv"), index=False)
     print("\nDONE")
 

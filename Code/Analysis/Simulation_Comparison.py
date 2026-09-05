@@ -18,6 +18,7 @@ finds among observable galaxy properties. Comparison B is the model-discriminati
 test: edges in the invariant backbone are candidate robust physics; the rest
 localise where the recovered structure depends on the subgrid model.
 """
+
 import os
 from collections import Counter
 import numpy as np
@@ -33,7 +34,7 @@ ORIENT_THR = 0.60
 N_RUNS = 50
 
 CFG = [
-    ("matchA_NSA",   "matchA_NSA.pkl",   7, 20),
+    ("matchA_NSA", "matchA_NSA.pkl", 7, 20),
     ("matchA_TNG50", "matchA_TNG50.pkl", 7, 20),
     ("matchA_EAGLE", "matchA_EAGLE.pkl", 7, 20),
     ("matchA_SIMBA", "matchA_SIMBA.pkl", 7, 20),
@@ -48,6 +49,7 @@ _ORIENTED = ("-->", "<--", "o->", "<-o")
 
 def load(fn):
     import pickle
+
     d = pickle.load(open(os.path.join(DATA, fn), "rb"))
     return pd.DataFrame({k: np.asarray(v, float) for k, v in d.items()})
 
@@ -79,10 +81,10 @@ def canon(a, mark, b):
 def _direction(m):
     """Determined causal direction of a canonical 'a MARK b' edge."""
     if m in ("-->", "o->"):
-        return "fwd"   # arrowhead at b
+        return "fwd"  # arrowhead at b
     if m in ("<--", "<-o"):
-        return "rev"   # arrowhead at a
-    return "und"        # o-o, <->
+        return "rev"  # arrowhead at a
+    return "und"  # o-o, <->
 
 
 def consensus(name, fn, t, p, n_runs=N_RUNS):
@@ -104,8 +106,9 @@ def consensus(name, fn, t, p, n_runs=N_RUNS):
             continue
         top, topn = marks[key].most_common(1)[0]
         cm = top if topn / cnt >= ORIENT_THR else "o-o"
-        rows.append({"var_a": key[0], "var_b": key[1],
-                     "presence": round(cnt / n_runs, 3), "consensus_mark": cm})
+        rows.append(
+            {"var_a": key[0], "var_b": key[1], "presence": round(cnt / n_runs, 3), "consensus_mark": cm}
+        )
     out = pd.DataFrame(rows).sort_values("presence", ascending=False)
     out.to_csv(os.path.join(RESULTS, f"consensus_{name}.csv"), index=False)
     n_or = out["consensus_mark"].isin(_ORIENTED).sum()
@@ -122,8 +125,7 @@ def compare_A():
     codes = ["NSA", "TNG50", "EAGLE", "SIMBA"]
     maps = {c: _mark_map(f"matchA_{c}") for c in codes}
     allpairs = sorted(set().union(*[set(m) for m in maps.values()]))
-    rows = [{"var_a": a, "var_b": b, **{c: maps[c].get((a, b), "-") for c in codes}}
-            for (a, b) in allpairs]
+    rows = [{"var_a": a, "var_b": b, **{c: maps[c].get((a, b), "-") for c in codes}} for (a, b) in allpairs]
     pd.DataFrame(rows).to_csv(os.path.join(RESULTS, "comparison_A.csv"), index=False)
     print("\nComparison A:", len(rows), "edges in union")
 
@@ -133,7 +135,7 @@ def compare_B():
     maps = {c: _mark_map(f"matchB_{c}") for c in codes}
     allpairs = sorted(set().union(*[set(m) for m in maps.values()]))
     rows = []
-    for (a, b) in allpairs:
+    for a, b in allpairs:
         mk = {c: maps[c].get((a, b), "-") for c in codes}
         present = [c for c in codes if mk[c] != "-"]
         if len(present) == 3:
@@ -142,11 +144,11 @@ def compare_B():
             # and --> count as agreement, since the tail mark is not reproducible.
             dirs = [_direction(mk[c]) for c in codes]
             if all(d == "fwd" for d in dirs) or all(d == "rev" for d in dirs):
-                cls = "invariant_oriented"     # robust backbone: same direction in all 3
+                cls = "invariant_oriented"  # robust backbone: same direction in all 3
             elif all(d == "und" for d in dirs):
                 cls = "invariant_undirected"
             else:
-                cls = "invariant_conflict"     # present in all 3, directions disagree
+                cls = "invariant_conflict"  # present in all 3, directions disagree
         elif len(present) == 2:
             cls = "majority"
         else:
@@ -159,7 +161,9 @@ def compare_B():
     print("\nINVARIANT BACKBONE (present in all three codes):")
     inv = df[df["edge_class"].str.startswith("invariant")]
     for r in inv.itertuples():
-        print(f"  {r.var_a:13s} -- {r.var_b:13s}  TNG50:{r.TNG50:4s} EAGLE:{r.EAGLE:4s} SIMBA:{r.SIMBA:4s}  [{r.edge_class}]")
+        print(
+            f"  {r.var_a:13s} -- {r.var_b:13s}  TNG50:{r.TNG50:4s} EAGLE:{r.EAGLE:4s} SIMBA:{r.SIMBA:4s}  [{r.edge_class}]"
+        )
     return df
 
 

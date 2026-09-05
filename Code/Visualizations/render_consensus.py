@@ -17,6 +17,7 @@ claims a tail determination that does not survive re-running the search.
 
 Only edges present in >= PRESENCE_THR of runs are shown. Output goes to Plots/.
 """
+
 import os
 import pandas as pd
 import graphviz as gviz
@@ -28,8 +29,8 @@ PRESENCE_THR = 0.50
 
 DATASETS = {
     "ALFALFA_NSA": "alfalfa_nsa_fcit_t7_p35",
-    "NSA":         "nsa_fcit_t14_p50",
-    "TNG50":       "tng50_fcit_t7_p15",
+    "NSA": "nsa_fcit_t14_p50",
+    "TNG50": "tng50_fcit_t7_p15",
 }
 
 # Graphviz endpoint attributes (conservative: a determined arrowhead is drawn as
@@ -37,12 +38,12 @@ DATASETS = {
 # tail determination is not reproducible across runs). A circle endpoint uses the
 # "odot" arrow style.
 _EDGE_STYLE = {
-    "-->": dict(dir="both", arrowtail="odot",   arrowhead="normal"),
-    "o->": dict(dir="both", arrowtail="odot",   arrowhead="normal"),
+    "-->": dict(dir="both", arrowtail="odot", arrowhead="normal"),
+    "o->": dict(dir="both", arrowtail="odot", arrowhead="normal"),
     "<--": dict(dir="both", arrowtail="normal", arrowhead="odot"),
     "<-o": dict(dir="both", arrowtail="normal", arrowhead="odot"),
-    "o-o": dict(dir="both", arrowtail="odot",   arrowhead="odot"),
-    "<->": dict(dir="both", arrowtail="odot",   arrowhead="odot"),
+    "o-o": dict(dir="both", arrowtail="odot", arrowhead="odot"),
+    "<->": dict(dir="both", arrowtail="odot", arrowhead="odot"),
 }
 
 
@@ -140,8 +141,10 @@ def main():
             else:
                 n_or += 1
         g.render(filename=base, directory=PLOTS, format="png", cleanup=True)
-        print(f"{name}: {len(df)} edges -> {n_or} oriented (arrowhead), "
-              f"{n_undir} undirected -> Plots/{base}.png")
+        print(
+            f"{name}: {len(df)} edges -> {n_or} oriented (arrowhead), "
+            f"{n_undir} undirected -> Plots/{base}.png"
+        )
 
 
 if __name__ == "__main__":

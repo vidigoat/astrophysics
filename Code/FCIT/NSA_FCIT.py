@@ -11,15 +11,16 @@ import pandas as pd
 from pytetrad.tools import TetradSearch as ts
 import graphviz as gviz
 
-graphviz_bin = os.environ.get('GRAPHVIZ_BIN')
+graphviz_bin = os.environ.get("GRAPHVIZ_BIN")
 if not graphviz_bin:
-    graphviz_bin = r'C:\Users\sanji\Downloads\Graphviz-14.0.2-win64\bin'
+    graphviz_bin = r"C:\Users\sanji\Downloads\Graphviz-14.0.2-win64\bin"
 if graphviz_bin and os.path.exists(graphviz_bin):
     os.environ["PATH"] += os.pathsep + graphviz_bin
 
 PVAL_THRESHOLD = 0.01
 TRUNCATION_LIMIT = 14
 PENALTY_DISCOUNT = 50
+
 
 def main() -> None:
     repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -64,6 +65,7 @@ def main() -> None:
         final_png = os.path.join(viz_dir, f"{base_name}.png")
         if png_path != final_png:
             import shutil
+
             shutil.move(png_path, final_png)
 
     with open(txt_path, "w", encoding="utf-8") as fp:
@@ -80,6 +82,7 @@ def main() -> None:
             fp.write(f"  {idx:2d}. {name}\n")
         fp.write("\n" + "=" * 70 + "\n\n")
         fp.write(graph_str)
+
 
 if __name__ == "__main__":
     main()

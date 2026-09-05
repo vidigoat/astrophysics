@@ -12,12 +12,14 @@ ground truth --- the thing cross-code agreement (0.78/0.91) does NOT establish.
 Reports pooled accuracy + per-mock mean with a bootstrap 95% CI, plus skeleton F1
 for continuity.  Output: Results/orientation_accuracy_mocks.csv + printed summary.
 """
+
 import os, pickle, re
 from collections import Counter
 import numpy as np, pandas as pd
 import pytetrad.tools.TetradSearch as ts
 
 import os as _os
+
 REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
 MOCKS = pickle.load(open(f"{REPO}/Data/MockDatasets/mock_datasets.pkl", "rb"))
 T, P, ALPHA, NRUN, PRES, ORI = 7, 8, 0.01, 15, 0.50, 0.60
@@ -28,7 +30,8 @@ _dir = lambda m: "fwd" if m in ("-->", "o->") else "rev" if m in ("<--", "<-o") 
 
 
 def zc(x):
-    x = np.asarray(x, float); s = np.std(x)
+    x = np.asarray(x, float)
+    s = np.std(x)
     return (x - np.mean(x)) / (s if s > 0 else 1.0)
 
 
@@ -37,7 +40,8 @@ def parse(g):
     for raw in g.split("\n"):
         s = raw.strip()
         if s.startswith("Graph Edges"):
-            inb = True; continue
+            inb = True
+            continue
         if not inb:
             continue
         if s.startswith("Graph "):
@@ -45,15 +49,18 @@ def parse(g):
         for mk in _M:
             if mk in s:
                 body = s.split(".", 1)[1].strip() if "." in s.split(mk)[0] else s
-                l, r = body.split(mk, 1); a, b = l.strip(), r.strip()
-                edges.append(((a, b), mk) if a <= b else ((b, a), _FL[mk])); break
+                l, r = body.split(mk, 1)
+                a, b = l.strip(), r.strip()
+                edges.append(((a, b), mk) if a <= b else ((b, a), _FL[mk]))
+                break
     return edges
 
 
 def consensus(df):
     pres, marks = Counter(), {}
     for _ in range(NRUN):
-        s = ts.TetradSearch(df); s.set_verbose(False)
+        s = ts.TetradSearch(df)
+        s.set_verbose(False)
         s.use_basis_function_lrt(truncation_limit=T, alpha=ALPHA)
         s.use_basis_function_bic(truncation_limit=T, penalty_discount=P)
         s.run_fcit()
@@ -72,10 +79,10 @@ def consensus(df):
 def true_maps(true_edges):
     """canonical skeleton set + direction dict from the true DAG edge set (parent,child)."""
     skel, tdir = set(), {}
-    for (u, v) in true_edges:
+    for u, v in true_edges:
         key = (u, v) if u <= v else (v, u)
         skel.add(key)
-        tdir[key] = "fwd" if key == (u, v) else "rev"   # fwd = canonical a is the parent
+        tdir[key] = "fwd" if key == (u, v) else "rev"  # fwd = canonical a is the parent
     return skel, tdir
 
 
@@ -88,7 +95,9 @@ def main():
         skel, tdir = true_maps(mock["true_edges"])
         pred_skel = set(g.keys())
         # skeleton F1
-        tp = len(skel & pred_skel); fp = len(pred_skel - skel); fn = len(skel - pred_skel)
+        tp = len(skel & pred_skel)
+        fp = len(pred_skel - skel)
+        fn = len(skel - pred_skel)
         prec = tp / (tp + fp) if tp + fp else 0.0
         rec = tp / (tp + fn) if tp + fn else 0.0
         f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
@@ -96,16 +105,25 @@ def main():
         oriented = [(k, g[k]) for k in (skel & pred_skel) if _dir(g[k]) != "und"]
         n_oriented = len(oriented)
         n_correct = sum(1 for k, m in oriented if _dir(m) == tdir[k])
-        rows.append(dict(mock=i, n_true=len(skel), n_pred=len(pred_skel), skel_f1=round(f1, 3),
-                         n_oriented=n_oriented, n_correct=n_correct,
-                         orient_acc=(n_correct / n_oriented) if n_oriented else np.nan))
+        rows.append(
+            dict(
+                mock=i,
+                n_true=len(skel),
+                n_pred=len(pred_skel),
+                skel_f1=round(f1, 3),
+                n_oriented=n_oriented,
+                n_correct=n_correct,
+                orient_acc=(n_correct / n_oriented) if n_oriented else np.nan,
+            )
+        )
         if (i + 1) % 10 == 0:
             print(f"  {i+1}/{N_MOCKS} mocks done", flush=True)
 
     d = pd.DataFrame(rows)
     d.to_csv(f"{REPO}/Results/orientation_accuracy_mocks.csv", index=False)
     # pooled = total correct / total oriented across all mocks
-    tot_or = int(d["n_oriented"].sum()); tot_co = int(d["n_correct"].sum())
+    tot_or = int(d["n_oriented"].sum())
+    tot_co = int(d["n_correct"].sum())
     pooled = tot_co / tot_or if tot_or else float("nan")
     # per-mock mean + bootstrap CI (mocks with >=1 oriented edge)
     per = d["orient_acc"].dropna().values

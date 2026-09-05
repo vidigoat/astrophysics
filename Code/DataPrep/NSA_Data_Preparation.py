@@ -9,12 +9,12 @@ import numpy as np
 from astropy.io import fits
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-DEFAULT_FITS_PATH = r'C:\Users\sanji\Downloads\nsa_v1_0_1.fits'
-DEFAULT_FITS_PATH_ROOT = os.path.join(REPO_ROOT, 'nsa_v1_0_1.fits')
-DEFAULT_FITS_PATH_DATA = os.path.join(REPO_ROOT, 'Data', 'nsa_v1_0_1.fits')
+DEFAULT_FITS_PATH = r"C:\Users\sanji\Downloads\nsa_v1_0_1.fits"
+DEFAULT_FITS_PATH_ROOT = os.path.join(REPO_ROOT, "nsa_v1_0_1.fits")
+DEFAULT_FITS_PATH_DATA = os.path.join(REPO_ROOT, "Data", "nsa_v1_0_1.fits")
 
-if 'NSA_FITS_PATH' in os.environ:
-    FITS_PATH = os.environ.get('NSA_FITS_PATH')
+if "NSA_FITS_PATH" in os.environ:
+    FITS_PATH = os.environ.get("NSA_FITS_PATH")
 elif os.path.exists(DEFAULT_FITS_PATH):
     FITS_PATH = DEFAULT_FITS_PATH
 elif os.path.exists(DEFAULT_FITS_PATH_ROOT):
@@ -24,6 +24,7 @@ else:
 
 OUTPUT_DIR = os.path.join(REPO_ROOT, "Data")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "nsa_final_10props.pkl")
+
 
 def main():
     if not os.path.exists(FITS_PATH):
@@ -36,7 +37,7 @@ def main():
         )
 
     print(f"Loading NSA data from: {FITS_PATH}")
-    
+
     with fits.open(FITS_PATH, memmap=True) as hdul:
         data = hdul[1].data
         n_galaxies = len(data)
@@ -79,61 +80,62 @@ def main():
     n_valid = np.count_nonzero(valid_mask)
     if n_valid == 0:
         raise RuntimeError("No valid rows remain after filtering.")
-    
+
     print(f"Galaxies with finite values: {n_valid:,} ({100*n_valid/n_galaxies:.1f}%)")
 
     for key in data_dict:
         data_dict[key] = data_dict[key][valid_mask]
 
-    n_before_cuts = len(data_dict['ELPETRO_MASS'])
+    n_before_cuts = len(data_dict["ELPETRO_MASS"])
     cut_mask = np.ones(n_before_cuts, dtype=bool)
 
-    cut = (data_dict['COLOR_U_R'] >= -0.5) & (data_dict['COLOR_U_R'] <= 4.0)
+    cut = (data_dict["COLOR_U_R"] >= -0.5) & (data_dict["COLOR_U_R"] <= 4.0)
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_B300'] > 1e-8) & (data_dict['ELPETRO_B300'] < 10.0)
+    cut = (data_dict["ELPETRO_B300"] > 1e-8) & (data_dict["ELPETRO_B300"] < 10.0)
     cut_mask &= cut
 
-    cut = (data_dict['SERSIC_N'] > 0) & (data_dict['SERSIC_N'] < 6.0)
+    cut = (data_dict["SERSIC_N"] > 0) & (data_dict["SERSIC_N"] < 6.0)
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_METS'] > -2.5) & (data_dict['ELPETRO_METS'] < 0.5)
+    cut = (data_dict["ELPETRO_METS"] > -2.5) & (data_dict["ELPETRO_METS"] < 0.5)
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_MTOL'] >= 0.1) & (data_dict['ELPETRO_MTOL'] <= 10.0)
+    cut = (data_dict["ELPETRO_MTOL"] >= 0.1) & (data_dict["ELPETRO_MTOL"] <= 10.0)
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_BA'] > 0) & (data_dict['ELPETRO_BA'] < 1.0)
+    cut = (data_dict["ELPETRO_BA"] > 0) & (data_dict["ELPETRO_BA"] < 1.0)
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_TH50_R'] > 0) & (data_dict['ELPETRO_TH50_R'] < 25.0)
+    cut = (data_dict["ELPETRO_TH50_R"] > 0) & (data_dict["ELPETRO_TH50_R"] < 25.0)
     cut_mask &= cut
 
-    cut = data_dict['ZDIST'] < 0.15
+    cut = data_dict["ZDIST"] < 0.15
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_MASS'] > 6.0) & (data_dict['ELPETRO_MASS'] < 12.0)
+    cut = (data_dict["ELPETRO_MASS"] > 6.0) & (data_dict["ELPETRO_MASS"] < 12.0)
     cut_mask &= cut
 
-    cut = (data_dict['ELPETRO_ABSMAG_R'] > -25.0) & (data_dict['ELPETRO_ABSMAG_R'] < -10.0)
+    cut = (data_dict["ELPETRO_ABSMAG_R"] > -25.0) & (data_dict["ELPETRO_ABSMAG_R"] < -10.0)
     cut_mask &= cut
 
     for key in data_dict:
         data_dict[key] = data_dict[key][cut_mask]
 
-    n_after_cuts = len(data_dict['ELPETRO_MASS'])
+    n_after_cuts = len(data_dict["ELPETRO_MASS"])
     n_removed = n_before_cuts - n_after_cuts
-    
+
     print(f"\nQuality cuts applied:")
     print(f"  Galaxies before cuts: {n_before_cuts:,}")
     print(f"  Galaxies after cuts: {n_after_cuts:,}")
     print(f"  Removed: {n_removed:,} ({100*n_removed/n_before_cuts:.1f}%)")
-    
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(OUTPUT_FILE, "wb") as fp:
         pickle.dump(data_dict, fp)
-    
+
     print(f"\nData saved to: {OUTPUT_FILE}")
+
 
 if __name__ == "__main__":
     main()

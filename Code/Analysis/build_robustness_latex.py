@@ -41,25 +41,25 @@ TXT_PATH = os.path.join(OUT_DIR, "robustness_summary.txt")
 
 BASELINES: Dict[str, Tuple[int, int]] = {
     "ALFALFA_NSA": (7, 35),
-    "NSA":         (14, 50),
-    "TNG50":       (7, 15),
+    "NSA": (14, 50),
+    "TNG50": (7, 15),
 }
 
 # LaTeX-friendly variable labels.
 LABEL: Dict[str, str] = {
-    "ELPETRO_MASS":      r"$M_\star$",
-    "ELPETRO_ABSMAG_R":  r"$M_r$",
-    "ELPETRO_TH50_R":    r"$R_{50}$",
-    "ELPETRO_MTOL":      r"$M/L$",
-    "logMH":             r"$M_{\rm HI}$",
-    "W50":               r"$W_{50}$",
-    "STELLAR_MASS":      r"$M_\star$",
-    "BARYONIC_MASS":     r"$M_{\rm bary}$",
-    "HALFMASS_RAD":      r"$R_{1/2}$",
-    "GAS_MASS":          r"$M_{\rm gas}$",
-    "BH_MASS":           r"$M_{\rm BH}$",
-    "DM_MASS":           r"$M_{\rm DM}$",
-    "GAS_METALLICITY":   r"$Z_{\rm gas}$",
+    "ELPETRO_MASS": r"$M_\star$",
+    "ELPETRO_ABSMAG_R": r"$M_r$",
+    "ELPETRO_TH50_R": r"$R_{50}$",
+    "ELPETRO_MTOL": r"$M/L$",
+    "logMH": r"$M_{\rm HI}$",
+    "W50": r"$W_{50}$",
+    "STELLAR_MASS": r"$M_\star$",
+    "BARYONIC_MASS": r"$M_{\rm bary}$",
+    "HALFMASS_RAD": r"$R_{1/2}$",
+    "GAS_MASS": r"$M_{\rm gas}$",
+    "BH_MASS": r"$M_{\rm BH}$",
+    "DM_MASS": r"$M_{\rm DM}$",
+    "GAS_METALLICITY": r"$Z_{\rm gas}$",
 }
 
 
@@ -74,7 +74,7 @@ MARK_TEX = {
     "o->": r"$\circ\!\!\rightarrow$",
     "<-o": r"$\leftarrow\!\!\circ$",
     "o-o": r"$\circ\!\!-\!\!\circ$",
-    "":    r"--",
+    "": r"--",
 }
 
 
@@ -86,9 +86,7 @@ def grid_table(df_cells: pd.DataFrame, ds: str, baseline: Tuple[int, int]) -> st
     truncs = sorted(df_cells["trunc"].unique())
     pens = sorted(df_cells["penalty"].unique())
     t0, p0 = baseline
-    cols_header = " & ".join(
-        f"$p={p}$" + (r"$^\dagger$" if p == p0 else "") for p in pens
-    )
+    cols_header = " & ".join(f"$p={p}$" + (r"$^\dagger$" if p == p0 else "") for p in pens)
     lines = [
         r"\begin{table}[t]",
         r"\centering",
@@ -160,15 +158,13 @@ def edge_table(df_marks: pd.DataFrame, ds: str, baseline: Tuple[int, int]) -> st
 
         edge_label = f"{pretty(src)} {MARK_TEX.get(base_mark, '?')} {pretty(dst)}"
         lines.append(
-            f"{edge_label} & {MARK_TEX.get(base_mark, '?')} & "
-            f"{same}/9 & {arrow_ok}/9 & {miss}/9 \\\\"
+            f"{edge_label} & {MARK_TEX.get(base_mark, '?')} & " f"{same}/9 & {arrow_ok}/9 & {miss}/9 \\\\"
         )
     lines += [r"\hline", r"\end{tabular}", r"\end{table}", ""]
     return "\n".join(lines)
 
 
-def text_summary(df_cells: pd.DataFrame, df_marks: pd.DataFrame, ds: str,
-                 baseline: Tuple[int, int]) -> str:
+def text_summary(df_cells: pd.DataFrame, df_marks: pd.DataFrame, ds: str, baseline: Tuple[int, int]) -> str:
     t0, p0 = baseline
     dc = df_cells[df_cells["dataset"] == ds]
     n_base = int(dc[(dc["trunc"] == t0) & (dc["penalty"] == p0)]["n_edges"].iloc[0])
@@ -180,8 +176,7 @@ def text_summary(df_cells: pd.DataFrame, df_marks: pd.DataFrame, ds: str,
         "=" * 72,
         f"{ds}  (baseline t={t0}, p={p0})",
         "=" * 72,
-        f"  Edge count: baseline={n_base}, min={n_min}, max={n_max}, "
-        f"relative spread={spread:.1%}",
+        f"  Edge count: baseline={n_base}, min={n_min}, max={n_max}, " f"relative spread={spread:.1%}",
         "  Grid (t, p, edges, dir_frac):",
     ]
     for _, row in dc.sort_values(["trunc", "penalty"]).iterrows():
@@ -229,23 +224,29 @@ def text_summary(df_cells: pd.DataFrame, df_marks: pd.DataFrame, ds: str,
             f"same={same}/9  arrow_ok={arrow_ok}/9  miss={miss}/9{tag}"
         )
 
-    all_baseline_stable = (n_in_baseline > 0
-                           and n_stable_in_baseline == n_in_baseline)
-    all_absent_consistent = (n_absent_in_baseline_and_stays_absent
-                             == n_absent_in_baseline_total)
+    all_baseline_stable = n_in_baseline > 0 and n_stable_in_baseline == n_in_baseline
+    all_absent_consistent = n_absent_in_baseline_and_stays_absent == n_absent_in_baseline_total
     if all_baseline_stable and all_absent_consistent and spread < 0.20:
-        verdict = (f"STABLE: all {n_in_baseline}/{n_in_baseline} baseline key edges "
-                   f"hold orientation in ≥7/9 cells; edges absent at baseline stay "
-                   f"absent in ≥7/9 cells; edge density spread {spread:.0%}.")
+        verdict = (
+            f"STABLE: all {n_in_baseline}/{n_in_baseline} baseline key edges "
+            f"hold orientation in ≥7/9 cells; edges absent at baseline stay "
+            f"absent in ≥7/9 cells; edge density spread {spread:.0%}."
+        )
     elif all_baseline_stable and all_absent_consistent:
-        verdict = (f"STABLE-ORIENT: all baseline key edges hold orientation in "
-                   f"≥6/9 cells; but total edge density varies {spread:.0%}.")
+        verdict = (
+            f"STABLE-ORIENT: all baseline key edges hold orientation in "
+            f"≥6/9 cells; but total edge density varies {spread:.0%}."
+        )
     elif all_baseline_stable:
-        verdict = (f"STABLE: all baseline key edges hold orientation in ≥7/9 cells. "
-                   "Some non-baseline key edges appear sporadically; see table.")
+        verdict = (
+            f"STABLE: all baseline key edges hold orientation in ≥7/9 cells. "
+            "Some non-baseline key edges appear sporadically; see table."
+        )
     else:
-        verdict = (f"PARTIAL: {n_stable_in_baseline}/{n_in_baseline} baseline key "
-                   f"edges hold orientation in ≥7/9 cells.")
+        verdict = (
+            f"PARTIAL: {n_stable_in_baseline}/{n_in_baseline} baseline key "
+            f"edges hold orientation in ≥7/9 cells."
+        )
     lines.append(f"  VERDICT: {verdict}")
     lines.append("")
     return "\n".join(lines)

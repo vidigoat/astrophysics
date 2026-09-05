@@ -28,8 +28,8 @@ import pandas as pd
 import pytetrad.tools.TetradSearch as ts
 
 ALPHA = 0.01
-PRESENCE_THR = 0.50   # edge kept if it appears in >= 50% of runs
-ORIENT_THR = 0.60     # direction assigned if it dominates in >= 60% of appearances
+PRESENCE_THR = 0.50  # edge kept if it appears in >= 50% of runs
+ORIENT_THR = 0.60  # direction assigned if it dominates in >= 60% of appearances
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA = os.path.join(REPO, "Data")
@@ -40,8 +40,8 @@ RESULTS = os.path.join(REPO, "Results")
 # samples (ALFALFA, TNG50) get many repeats.
 CFG = [
     ("ALFALFA_NSA", "alfalfa_nsa_final_13props.pkl", 7, 35, 50),
-    ("TNG50",       "tng50_final.pkl",                7, 15, 50),
-    ("NSA",         "nsa_final_10props.pkl",         14, 50, 10),
+    ("TNG50", "tng50_final.pkl", 7, 15, 50),
+    ("NSA", "nsa_final_10props.pkl", 14, 50, 10),
 ]
 
 _MARKS = ("<->", "-->", "<--", "o->", "<-o", "o-o")
@@ -94,7 +94,7 @@ def canon(a, mark, b):
 
 
 def run_dataset(name, fname, t, p, n_runs):
-    df = load(fname)              # load ONCE, reuse across runs
+    df = load(fname)  # load ONCE, reuse across runs
     pair_present = Counter()
     pair_marks = {}  # pairkey -> Counter of canonical full marks
     for i in range(n_runs):
@@ -120,16 +120,19 @@ def run_dataset(name, fname, t, p, n_runs):
         # consensus full mark: the modal mark if it dominates >= ORIENT_THR of the
         # runs in which the edge appears, otherwise report it as undirected.
         cons_mark = top_mark if top_n / cnt >= ORIENT_THR else "o-o"
-        rows.append({
-            "var_a": x, "var_b": y,
-            "presence": round(cnt / n_runs, 3),
-            "mark_frac": round(top_n / cnt, 3),
-            "arrow_at_b_frac": round(n_at_y / cnt, 3),
-            "arrow_at_a_frac": round(n_at_x / cnt, 3),
-            "undirected_frac": round(n_none / cnt, 3),
-            "consensus_mark": cons_mark,
-            "consensus": f"{x} {cons_mark} {y}",
-        })
+        rows.append(
+            {
+                "var_a": x,
+                "var_b": y,
+                "presence": round(cnt / n_runs, 3),
+                "mark_frac": round(top_n / cnt, 3),
+                "arrow_at_b_frac": round(n_at_y / cnt, 3),
+                "arrow_at_a_frac": round(n_at_x / cnt, 3),
+                "undirected_frac": round(n_none / cnt, 3),
+                "consensus_mark": cons_mark,
+                "consensus": f"{x} {cons_mark} {y}",
+            }
+        )
     df_out = pd.DataFrame(rows).sort_values("presence", ascending=False)
     return df_out
 
@@ -146,8 +149,10 @@ def main():
         out.to_csv(os.path.join(RESULTS, f"consensus_{name}.csv"), index=False)
         stable = out[out["presence"] >= PRESENCE_THR]
         oriented = stable[~stable["consensus"].str.contains("o-o")]
-        print(f"edges present >= {PRESENCE_THR:.0%}: {len(stable)}   "
-              f"of which oriented (>= {ORIENT_THR:.0%}): {len(oriented)}")
+        print(
+            f"edges present >= {PRESENCE_THR:.0%}: {len(stable)}   "
+            f"of which oriented (>= {ORIENT_THR:.0%}): {len(oriented)}"
+        )
         print(stable[["var_a", "var_b", "presence", "consensus"]].to_string(index=False))
 
 

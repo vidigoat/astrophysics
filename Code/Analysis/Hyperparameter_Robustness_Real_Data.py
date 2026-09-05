@@ -43,6 +43,7 @@ RESULTS_DIR = os.path.join(REPO_ROOT, "Results")
 # Presence is checked symmetrically (A--B in either direction counts as present)
 # but orientation must match expected_mark to count as "stable".
 
+
 @dataclass(frozen=True)
 class DatasetConfig:
     name: str
@@ -59,9 +60,9 @@ DATASETS: Tuple[DatasetConfig, ...] = (
         baseline_trunc=7,
         baseline_penalty=35,
         key_edges=(
-            ("ELPETRO_MASS",   "ELPETRO_ABSMAG_R", "-->"),  # stellar_mass -> r_luminosity
-            ("logMH",          "ELPETRO_MASS",     "-->"),  # HI_mass     -> stellar_mass
-            ("W50",            "logMH",            "<->"),  # HI_linewidth <-> HI_mass
+            ("ELPETRO_MASS", "ELPETRO_ABSMAG_R", "-->"),  # stellar_mass -> r_luminosity
+            ("logMH", "ELPETRO_MASS", "-->"),  # HI_mass     -> stellar_mass
+            ("W50", "logMH", "<->"),  # HI_linewidth <-> HI_mass
         ),
     ),
     DatasetConfig(
@@ -70,9 +71,9 @@ DATASETS: Tuple[DatasetConfig, ...] = (
         baseline_trunc=14,
         baseline_penalty=50,
         key_edges=(
-            ("ELPETRO_MASS",      "ELPETRO_ABSMAG_R", "-->"),  # stellar_mass    -> r_luminosity
-            ("ELPETRO_ABSMAG_R",  "ELPETRO_TH50_R",   "-->"),  # r_luminosity    -> half_light_radius
-            ("ELPETRO_MTOL",      "ELPETRO_ABSMAG_R", "-->"),  # mass_to_light   -> r_luminosity
+            ("ELPETRO_MASS", "ELPETRO_ABSMAG_R", "-->"),  # stellar_mass    -> r_luminosity
+            ("ELPETRO_ABSMAG_R", "ELPETRO_TH50_R", "-->"),  # r_luminosity    -> half_light_radius
+            ("ELPETRO_MTOL", "ELPETRO_ABSMAG_R", "-->"),  # mass_to_light   -> r_luminosity
         ),
     ),
     DatasetConfig(
@@ -81,10 +82,10 @@ DATASETS: Tuple[DatasetConfig, ...] = (
         baseline_trunc=7,
         baseline_penalty=15,
         key_edges=(
-            ("STELLAR_MASS", "BARYONIC_MASS",   "-->"),
-            ("STELLAR_MASS", "HALFMASS_RAD",    "-->"),
-            ("GAS_MASS",     "BH_MASS",         "-->"),
-            ("DM_MASS",      "GAS_METALLICITY", "-->"),
+            ("STELLAR_MASS", "BARYONIC_MASS", "-->"),
+            ("STELLAR_MASS", "HALFMASS_RAD", "-->"),
+            ("GAS_MASS", "BH_MASS", "-->"),
+            ("DM_MASS", "GAS_METALLICITY", "-->"),
         ),
     ),
 )
@@ -93,6 +94,7 @@ DATASETS: Tuple[DatasetConfig, ...] = (
 # ---------------------------------------------------------------------------
 # FCIT runner
 # ---------------------------------------------------------------------------
+
 
 def load_dataset(pickle_file: str) -> pd.DataFrame:
     """Load a dataset pickle (dict of arrays) into a DataFrame."""
@@ -108,8 +110,7 @@ def run_fcit(df: pd.DataFrame, truncation_limit: int, penalty_discount: int) -> 
     search = ts.TetradSearch(df)
     search.set_verbose(False)
     search.use_basis_function_lrt(truncation_limit=truncation_limit, alpha=ALPHA)
-    search.use_basis_function_bic(truncation_limit=truncation_limit,
-                                  penalty_discount=penalty_discount)
+    search.use_basis_function_bic(truncation_limit=truncation_limit, penalty_discount=penalty_discount)
     search.run_fcit()
     return str(search.get_java())
 
@@ -192,9 +193,9 @@ def find_edge(edges: List[Tuple[str, str, str]], src: str, dst: str) -> str | No
 
 def classify_edge(observed: str | None, expected: str) -> str:
     """Compare observed orientation against expected. Returns one of:
-       'match'   -- present with expected orientation
-       'present' -- present but different orientation
-       'missing' -- not present at all
+    'match'   -- present with expected orientation
+    'present' -- present but different orientation
+    'missing' -- not present at all
     """
     if observed is None:
         return "missing"
@@ -207,6 +208,7 @@ def classify_edge(observed: str | None, expected: str) -> str:
 # Grid
 # ---------------------------------------------------------------------------
 
+
 def grid_for(cfg: DatasetConfig) -> List[Tuple[int, int]]:
     """3x3 grid: truncation +/- 1, penalty +/- 20% (rounded)."""
     t0, p0 = cfg.baseline_trunc, cfg.baseline_penalty
@@ -218,6 +220,7 @@ def grid_for(cfg: DatasetConfig) -> List[Tuple[int, int]]:
 # ---------------------------------------------------------------------------
 # Per-dataset run and summary
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class CellResult:
@@ -245,16 +248,19 @@ def run_dataset(cfg: DatasetConfig) -> List[CellResult]:
             observed = find_edge(edges, src, dst)
             statuses[(src, dst)] = classify_edge(observed, expected)
         cell = CellResult(
-            trunc=t, penalty=p,
+            trunc=t,
+            penalty=p,
             n_edges=len(edges),
             directed_fraction=edge_directed_fraction(edges),
             runtime_s=time.time() - t0,
             key_edge_status=statuses,
         )
         results.append(cell)
-        print(f"  t={t:>3} p={p:>3}  edges={cell.n_edges:>3}  "
-              f"directed_frac={cell.directed_fraction:.2f}  "
-              f"runtime={cell.runtime_s:6.1f}s")
+        print(
+            f"  t={t:>3} p={p:>3}  edges={cell.n_edges:>3}  "
+            f"directed_frac={cell.directed_fraction:.2f}  "
+            f"runtime={cell.runtime_s:6.1f}s"
+        )
     return results
 
 
@@ -272,12 +278,15 @@ def print_summary(cfg: DatasetConfig, cells: List[CellResult]) -> None:
 
     edge_counts = [c.n_edges for c in cells]
     n_min, n_max = min(edge_counts), max(edge_counts)
-    n_baseline = next(c.n_edges for c in cells
-                      if c.trunc == cfg.baseline_trunc and c.penalty == cfg.baseline_penalty)
+    n_baseline = next(
+        c.n_edges for c in cells if c.trunc == cfg.baseline_trunc and c.penalty == cfg.baseline_penalty
+    )
     rel_spread = (n_max - n_min) / n_baseline if n_baseline else float("inf")
 
-    print(f"\n  Edge count: baseline={n_baseline}, min={n_min}, max={n_max}, "
-          f"relative spread={rel_spread:.1%}")
+    print(
+        f"\n  Edge count: baseline={n_baseline}, min={n_min}, max={n_max}, "
+        f"relative spread={rel_spread:.1%}"
+    )
 
     # Key edges across grid
     print(f"\n  Key physical edges (across all 9 cells):")
@@ -287,20 +296,19 @@ def print_summary(cfg: DatasetConfig, cells: List[CellResult]) -> None:
         n_match = statuses.count("match")
         n_present = statuses.count("present")
         n_missing = statuses.count("missing")
-        verdict = "STABLE" if n_match == 9 else (
-            "ORIENT VARIES" if n_missing == 0 else "DROPS OUT"
-        )
+        verdict = "STABLE" if n_match == 9 else ("ORIENT VARIES" if n_missing == 0 else "DROPS OUT")
         if n_match != 9:
             all_stable = False
-        print(f"    {src:>20} {expected:>4} {dst:<22}  "
-              f"match={n_match}/9  present={n_present}/9  missing={n_missing}/9   {verdict}")
+        print(
+            f"    {src:>20} {expected:>4} {dst:<22}  "
+            f"match={n_match}/9  present={n_present}/9  missing={n_missing}/9   {verdict}"
+        )
 
     # One-line verdict
     if all_stable and rel_spread < 0.15:
         verdict = "Main conclusions are stable across hyperparameter neighbourhood."
     elif all_stable:
-        verdict = ("Key physical edges stable; edge density shows moderate variation "
-                   f"({rel_spread:.0%}).")
+        verdict = "Key physical edges stable; edge density shows moderate variation " f"({rel_spread:.0%})."
     else:
         verdict = "Some sensitivity observed: at least one key edge varies across the grid."
     print(f"\n  Verdict: {verdict}")
@@ -310,6 +318,7 @@ def print_summary(cfg: DatasetConfig, cells: List[CellResult]) -> None:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     os.makedirs(RESULTS_DIR, exist_ok=True)

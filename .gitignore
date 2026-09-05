@@ -17,13 +17,12 @@ Data/
 *.fits
 *.fits.gz
 
-# Results (regenerable) — but keep the small consensus outputs that ARE the result
-Results/*.csv
-Results/*.pkl
-Results/*.txt
-Results/*.log
-!Results/consensus_*.csv
-!Results/CURRENT_fcit_graphs.txt
+# Outputs (all regenerable from the code; never tracked)
+Results/
+reanalysis/results/
+reanalysis/data/
+reanalysis/blackhole/results/
+reanalysis/blackhole/data/
 
 # JVM crash dumps
 hs_err_pid*.log
@@ -66,5 +65,10 @@ Results/alfalfa_nsa_fcit_improved_t7_p35.txt
 # Local revision notes (not part of the code repo)
 .revision/
 
-# Reanalysis drafts / prose (never in the repo)
+# Drafts, notes and prose (never in the repo)
 reanalysis/drafts/
+*.md
+!README.md
+*.tex
+*.pdf
+*.bib

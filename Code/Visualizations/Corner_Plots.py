@@ -13,11 +13,11 @@ from scipy import stats as scipy_stats  # type: ignore[reportMissingImports]
 from matplotlib.ticker import MaxNLocator
 
 # Publication settings
-mpl.rcParams['font.size'] = 13
-mpl.rcParams['axes.linewidth'] = 1.0
-mpl.rcParams['axes.edgecolor'] = '0.25'
-mpl.rcParams['xtick.color'] = '0.2'
-mpl.rcParams['ytick.color'] = '0.2'
+mpl.rcParams["font.size"] = 13
+mpl.rcParams["axes.linewidth"] = 1.0
+mpl.rcParams["axes.edgecolor"] = "0.25"
+mpl.rcParams["xtick.color"] = "0.2"
+mpl.rcParams["ytick.color"] = "0.2"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO_ROOT / "Data"
@@ -32,36 +32,43 @@ CONTOUR_GRID = 60  # 60x60 grid instead of 100x100
 # Per-dataset colours: strong contrast so contours and histograms are clearly visible
 # fill_1 = innermost (1σ, darkest), fill_3 = outermost (3σ, lightest)
 COLORS = {
-    'NSA': {
-        'hist_fill': '#B8D4F0',
-        'hist_edge': '#1A3A5C',
-        'scatter': '#5B9BD5',
-        'fill_1': '#1A3A5C',
-        'fill_2': '#2E5F8C',
-        'fill_3': '#7EB0D4',
+    "NSA": {
+        "hist_fill": "#B8D4F0",
+        "hist_edge": "#1A3A5C",
+        "scatter": "#5B9BD5",
+        "fill_1": "#1A3A5C",
+        "fill_2": "#2E5F8C",
+        "fill_3": "#7EB0D4",
     },
-    'TNG50': {
-        'hist_fill': '#B8E0B8',
-        'hist_edge': '#1B3D1B',
-        'scatter': '#4A9D4E',
-        'fill_1': '#1B5E20',
-        'fill_2': '#2E7D32',
-        'fill_3': '#81C784',
+    "TNG50": {
+        "hist_fill": "#B8E0B8",
+        "hist_edge": "#1B3D1B",
+        "scatter": "#4A9D4E",
+        "fill_1": "#1B5E20",
+        "fill_2": "#2E7D32",
+        "fill_3": "#81C784",
     },
-    'ALFALFA': {
-        'hist_fill': '#FFE0B2',
-        'hist_edge': '#E65100',
-        'scatter': '#F39C12',
-        'fill_1': '#BF360C',
-        'fill_2': '#E65100',
-        'fill_3': '#FFB74D',
-    }
+    "ALFALFA": {
+        "hist_fill": "#FFE0B2",
+        "hist_edge": "#E65100",
+        "scatter": "#F39C12",
+        "fill_1": "#BF360C",
+        "fill_2": "#E65100",
+        "fill_3": "#FFB74D",
+    },
 }
 
 # All variables used in each analysis (matching Tables 1-3 in the paper), so the
 # corner plots depict the full cleaned sample fed to FCIT.
-NSA_VARS = ["ZDIST", "ELPETRO_ABSMAG_R", "log_B300", "ELPETRO_MASS",
-            "SERSIC_N", "ELPETRO_BA", "ELPETRO_TH50_R"]
+NSA_VARS = [
+    "ZDIST",
+    "ELPETRO_ABSMAG_R",
+    "log_B300",
+    "ELPETRO_MASS",
+    "SERSIC_N",
+    "ELPETRO_BA",
+    "ELPETRO_TH50_R",
+]
 NSA_LABELS = {
     "ZDIST": "ZDIST",
     "ELPETRO_ABSMAG_R": "ABSMAG",
@@ -75,22 +82,40 @@ NSA_LABELS = {
     "ELPETRO_MTOL": "MTOL",
 }
 
-ALFALFA_VARS = ["ZDIST", "ELPETRO_ABSMAG_R", "log_B300", "ELPETRO_MASS",
-                "SERSIC_N", "ELPETRO_BA", "ELPETRO_TH50_R"]
-ALFALFA_LABELS = dict(NSA_LABELS, **{
-    "logMH": "logMH",
-    "W50": "W50",
-    "BARYONIC_MASS": "BARYONIC",
-})
+ALFALFA_VARS = [
+    "ZDIST",
+    "ELPETRO_ABSMAG_R",
+    "log_B300",
+    "ELPETRO_MASS",
+    "SERSIC_N",
+    "ELPETRO_BA",
+    "ELPETRO_TH50_R",
+]
+ALFALFA_LABELS = dict(
+    NSA_LABELS,
+    **{
+        "logMH": "logMH",
+        "W50": "W50",
+        "BARYONIC_MASS": "BARYONIC",
+    },
+)
 
-TNG50_VARS = ["STELLAR_MASS", "BARYONIC_MASS", "GAS_MASS", "HALFMASS_RAD",
-              "SFR", "PHOTOMETRIC_R", "COLOUR"]
+TNG50_VARS = ["STELLAR_MASS", "BARYONIC_MASS", "GAS_MASS", "HALFMASS_RAD", "SFR", "PHOTOMETRIC_R", "COLOUR"]
 TNG50_LABELS = {
-    "DM_MASS": "DM_MASS", "STELLAR_MASS": "STELLAR", "GAS_MASS": "GAS",
-    "BH_MASS": "BH", "BARYONIC_MASS": "BARYONIC", "HALFMASS_RAD": "HALFMASS_R",
-    "VEL_DISP": "VEL_DISP", "VMAX": "VMAX", "GAS_METALLICITY": "GAS_MET",
-    "STAR_METALLICITY": "STAR_MET", "PHOTOMETRIC_R": "PHOT_R",
-    "PHOTOMETRIC_U": "PHOT_U", "COLOUR": "COLOUR", "SFR": "SFR",
+    "DM_MASS": "DM_MASS",
+    "STELLAR_MASS": "STELLAR",
+    "GAS_MASS": "GAS",
+    "BH_MASS": "BH",
+    "BARYONIC_MASS": "BARYONIC",
+    "HALFMASS_RAD": "HALFMASS_R",
+    "VEL_DISP": "VEL_DISP",
+    "VMAX": "VMAX",
+    "GAS_METALLICITY": "GAS_MET",
+    "STAR_METALLICITY": "STAR_MET",
+    "PHOTOMETRIC_R": "PHOT_R",
+    "PHOTOMETRIC_U": "PHOT_U",
+    "COLOUR": "COLOUR",
+    "SFR": "SFR",
 }
 
 
@@ -107,19 +132,19 @@ def load_data(dataset_name: str) -> pd.DataFrame:
         vars_use = ALFALFA_VARS
     else:
         raise ValueError(f"Unknown: {dataset_name}")
-    
+
     if not path.exists():
         raise FileNotFoundError(f"Not found: {path}")
-    
+
     with open(path, "rb") as f:
         data = pickle.load(f)
-    
+
     df = pd.DataFrame(data)
-    
+
     if "log_B300" in vars_use and "log_B300" not in df.columns:
         b300 = df.get("ELPETRO_B300", np.ones(len(df)) * np.nan)
         df["log_B300"] = np.log10(np.maximum(np.asarray(b300, float), 1e-10))
-    
+
     cols = [c for c in vars_use if c in df.columns]
     return df[cols].dropna()
 
@@ -143,14 +168,14 @@ def kde_levels(zz, quantiles):
     levels = []
     for q in quantiles:
         idx = np.searchsorted(cum, q * cum[-1])
-        levels.append(float(flat[min(idx, len(flat)-1)]))
+        levels.append(float(flat[min(idx, len(flat) - 1)]))
     return levels
 
 
 def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
     """
     Create corner plot matching reference with filled contours.
-    
+
     Parameters
     ----------
     dataset_name : str
@@ -163,34 +188,33 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
     print(f"\n{'='*60}")
     print(f"Generating {dataset_name.upper()} corner plot...")
     print(f"{'='*60}")
-    
+
     df = load_data(dataset_name)
     print(f"Loaded {len(df)} data points")
-    
+
     if len(df) > max_points:
         df = df.sample(n=max_points, random_state=42)
         print(f"Using {max_points} points for plotting")
-    
+
     labels_dict = get_labels(dataset_name)
     vars_list = [c for c in df.columns if c in labels_dict]
     if not vars_list:
         vars_list = list(df.columns)
         labels_dict = {c: c for c in vars_list}
-    
+
     # Get colors for this dataset
     colors = COLORS[dataset_name.upper()]
     print(f"Using color scheme: {dataset_name.upper()}")
-    
+
     n = len(vars_list)
-    
+
     # Create figure
-    fig, axes = plt.subplots(n, n, figsize=(1.6*n, 1.6*n))
+    fig, axes = plt.subplots(n, n, figsize=(1.6 * n, 1.6 * n))
     if n == 1:
         axes = np.array([[axes]])
-    fig.patch.set_facecolor('white')
-    plt.subplots_adjust(hspace=0.04, wspace=0.04,
-                       left=0.10, right=0.98, bottom=0.10, top=0.98)
-    
+    fig.patch.set_facecolor("white")
+    plt.subplots_adjust(hspace=0.04, wspace=0.04, left=0.10, right=0.98, bottom=0.10, top=0.98)
+
     for i in range(n):
         for j in range(n):
             ax = axes[i, j]
@@ -207,18 +231,25 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
             x, y = x[mask], y[mask]
 
             for spine in ax.spines.values():
-                spine.set_color('0.2')
+                spine.set_color("0.2")
                 spine.set_linewidth(1.0)
 
             if i == j:
                 # Diagonal: filled histogram with clear dark edge (professional contrast)
                 n_bins = min(50, max(25, len(x) // 150))
-                ax.hist(x, bins=n_bins, density=True, histtype='stepfilled',
-                        facecolor=colors['hist_fill'], edgecolor=colors['hist_edge'],
-                        linewidth=1.4, alpha=1.0)
+                ax.hist(
+                    x,
+                    bins=n_bins,
+                    density=True,
+                    histtype="stepfilled",
+                    facecolor=colors["hist_fill"],
+                    edgecolor=colors["hist_edge"],
+                    linewidth=1.4,
+                    alpha=1.0,
+                )
                 ax.set_ylim(bottom=0)
                 ax.set_yticks([])
-                ax.grid(True, axis='x', alpha=0.3, linestyle='--', linewidth=0.6)
+                ax.grid(True, axis="x", alpha=0.3, linestyle="--", linewidth=0.6)
                 ax.set_axisbelow(True)
             else:
                 # OFF-DIAGONAL: clean 3-band distribution, then particles only in outer region
@@ -228,7 +259,7 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
                         n_kde = min(KDE_SAMPLE, len(x))
                         idx_kde = np.random.RandomState(42).choice(len(x), size=n_kde, replace=False)
                         x_kde, y_kde = x[idx_kde], y[idx_kde]
-                        kde = scipy_stats.gaussian_kde(np.vstack([x_kde, y_kde]), bw_method='scott')
+                        kde = scipy_stats.gaussian_kde(np.vstack([x_kde, y_kde]), bw_method="scott")
                         x_min, x_max = x.min(), x.max()
                         y_min, y_max = y.min(), y.max()
                         dx = max((x_max - x_min) * 0.08, 1e-9)
@@ -243,49 +274,107 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
                         z_max = np.nanmax(zz)
                         if len(levels) >= 3 and levels[0] < levels[1] < levels[2] and z_max > levels[2]:
                             # Clean 3 bands: inner (1σ), mid (2σ), outer (3σ) with distinct boundaries
-                            ax.contourf(xx, yy, zz, levels=[levels[2], z_max],
-                                        colors=[colors['fill_1']], alpha=0.92, zorder=2)
-                            ax.contourf(xx, yy, zz, levels=[levels[1], levels[2]],
-                                        colors=[colors['fill_2']], alpha=0.78, zorder=2)
-                            ax.contourf(xx, yy, zz, levels=[levels[0], levels[1]],
-                                        colors=[colors['fill_3']], alpha=0.58, zorder=2)
-                            ax.contour(xx, yy, zz, levels=levels,
-                                       colors=colors['hist_edge'], linewidths=1.15,
-                                       alpha=1.0, zorder=3)
+                            ax.contourf(
+                                xx,
+                                yy,
+                                zz,
+                                levels=[levels[2], z_max],
+                                colors=[colors["fill_1"]],
+                                alpha=0.92,
+                                zorder=2,
+                            )
+                            ax.contourf(
+                                xx,
+                                yy,
+                                zz,
+                                levels=[levels[1], levels[2]],
+                                colors=[colors["fill_2"]],
+                                alpha=0.78,
+                                zorder=2,
+                            )
+                            ax.contourf(
+                                xx,
+                                yy,
+                                zz,
+                                levels=[levels[0], levels[1]],
+                                colors=[colors["fill_3"]],
+                                alpha=0.58,
+                                zorder=2,
+                            )
+                            ax.contour(
+                                xx,
+                                yy,
+                                zz,
+                                levels=levels,
+                                colors=colors["hist_edge"],
+                                linewidths=1.15,
+                                alpha=1.0,
+                                zorder=3,
+                            )
                         elif len(levels) >= 2 and levels[0] < levels[1]:
-                            ax.contourf(xx, yy, zz, levels=[levels[1], z_max],
-                                        colors=[colors['fill_1']], alpha=0.88, zorder=2)
-                            ax.contourf(xx, yy, zz, levels=[levels[0], levels[1]],
-                                        colors=[colors['fill_2']], alpha=0.65, zorder=2)
-                            ax.contour(xx, yy, zz, levels=levels,
-                                       colors=colors['hist_edge'], linewidths=1.15, alpha=1.0, zorder=3)
+                            ax.contourf(
+                                xx,
+                                yy,
+                                zz,
+                                levels=[levels[1], z_max],
+                                colors=[colors["fill_1"]],
+                                alpha=0.88,
+                                zorder=2,
+                            )
+                            ax.contourf(
+                                xx,
+                                yy,
+                                zz,
+                                levels=[levels[0], levels[1]],
+                                colors=[colors["fill_2"]],
+                                alpha=0.65,
+                                zorder=2,
+                            )
+                            ax.contour(
+                                xx,
+                                yy,
+                                zz,
+                                levels=levels,
+                                colors=colors["hist_edge"],
+                                linewidths=1.15,
+                                alpha=1.0,
+                                zorder=3,
+                            )
                         # Particles only *not* in the distribution: density below 99.5% contour
                         dens_at_points = kde(np.vstack([x, y]))
                         outer_levels = kde_levels(zz, (OUTER_PARTICLES_QUANTILE,))
                         outer_threshold = outer_levels[0] if outer_levels else levels[0]
                         not_in_distribution = dens_at_points < outer_threshold
                         if np.any(not_in_distribution):
-                            ax.scatter(x[not_in_distribution], y[not_in_distribution],
-                                       s=1.6, alpha=0.36, color=colors['scatter'],
-                                       edgecolors='none', rasterized=True, zorder=4)
+                            ax.scatter(
+                                x[not_in_distribution],
+                                y[not_in_distribution],
+                                s=1.6,
+                                alpha=0.36,
+                                color=colors["scatter"],
+                                edgecolors="none",
+                                rasterized=True,
+                                zorder=4,
+                            )
                     except Exception:
                         pass
 
-            ax.tick_params(labelsize=15, direction='in', top=True, right=True,
-                           length=4, width=0.9, colors='0.2')
+            ax.tick_params(
+                labelsize=15, direction="in", top=True, right=True, length=4, width=0.9, colors="0.2"
+            )
             ax.xaxis.set_major_locator(MaxNLocator(4, integer=False))
             ax.yaxis.set_major_locator(MaxNLocator(4, integer=False))
             if i != j:
-                ax.grid(True, alpha=0.2, linestyle='--', linewidth=0.4)
+                ax.grid(True, alpha=0.2, linestyle="--", linewidth=0.4)
                 ax.set_axisbelow(True)
             if i < n - 1:
                 ax.set_xticklabels([])
             else:
-                ax.set_xlabel(labels_dict.get(var_x, var_x), fontsize=21, color='0.15')
+                ax.set_xlabel(labels_dict.get(var_x, var_x), fontsize=21, color="0.15")
             if j > 0:
                 ax.set_yticklabels([])
             else:
-                ax.set_ylabel(labels_dict.get(var_y, var_y), fontsize=21, color='0.15')
+                ax.set_ylabel(labels_dict.get(var_y, var_y), fontsize=21, color="0.15")
 
     # No in-image title or caption: the LaTeX figure caption carries the
     # description and the contour-level note, avoiding duplication on the page.
@@ -293,8 +382,7 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
     # Save PNG only (no PDF unless requested)
     PLOTS_DIR.mkdir(parents=True, exist_ok=True)
     out_png = PLOTS_DIR / f"corner_{dataset_name.lower()}_FINAL.png"
-    fig.savefig(out_png, dpi=dpi, bbox_inches='tight',
-                facecolor='white', pad_inches=0.1)
+    fig.savefig(out_png, dpi=dpi, bbox_inches="tight", facecolor="white", pad_inches=0.1)
     plt.close(fig)
     print(f"\n✓ Saved: {out_png.name}")
     print(f"{'='*60}\n")
@@ -303,19 +391,17 @@ def plot_corner(dataset_name: str, max_points: int = 10000, dpi: int = 300):
 
 def main():
     import argparse
-    
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", choices=["NSA", "TNG50", "ALFALFA"], 
-                       default="NSA")
+    parser.add_argument("--dataset", choices=["NSA", "TNG50", "ALFALFA"], default="NSA")
     parser.add_argument("--all", action="store_true")
     parser.add_argument("--dpi", type=int, default=150)
-    parser.add_argument("--points", type=int, default=20000,
-                       help="Number of points (20000 for dense)")
+    parser.add_argument("--points", type=int, default=20000, help="Number of points (20000 for dense)")
     args = parser.parse_args()
-    
+
     if args.all:
         for name in ["NSA", "TNG50", "ALFALFA"]:
-            color = {'NSA': 'BLUE', 'TNG50': 'GREEN', 'ALFALFA': 'ORANGE'}[name]
+            color = {"NSA": "BLUE", "TNG50": "GREEN", "ALFALFA": "ORANGE"}[name]
             print(f"\n>>> {name} ({color})")
             try:
                 plot_corner(name, max_points=args.points, dpi=args.dpi)

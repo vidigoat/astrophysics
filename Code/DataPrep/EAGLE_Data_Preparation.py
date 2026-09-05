@@ -7,6 +7,7 @@ aperture quantities + dust-free SDSS photometry) and writes the same first-order
 property set used for TNG50 and SIMBA, so the existing FCIT/consensus pipeline
 can consume it. Output: Data/eagle_final.pkl.
 """
+
 import os
 import pickle
 import numpy as np
