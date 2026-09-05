@@ -7,14 +7,6 @@ and the disjoint-halves null.  Writes results/fcit_z0.txt and fig_pags.png.
 import os, io, contextlib, pickle, sys
 import numpy as np, pandas as pd
 from pytetrad.tools import TetradSearch as ts
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, Circle
-import style
-
-style.use()
 from load_simba import load_simba
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -152,82 +144,3 @@ out.append(
 )
 open(os.path.join(HERE, "results", "fcit_z0.txt"), "w").write("\n".join(out))
 print("\n".join(out))
-
-# ---------------- figure ----------------
-label = {
-    "STELLAR_MASS": r"$M_\star$",
-    "DM_MASS": r"$M_{\rm h}$",
-    "BH_MASS": r"$M_{\rm BH}$",
-    "GAS_MASS": r"$M_{\rm gas}$",
-    "LOG_SIGMA": r"$\sigma_\star$",
-    "STAR_METALLICITY": r"$Z_\star$",
-    "GAS_METALLICITY": r"$Z_{\rm gas}$",
-    "SSFR": "sSFR",
-}
-node_col = {"DM_MASS": style.HALO, "BH_MASS": style.BH}
-order = [
-    "DM_MASS",
-    "STELLAR_MASS",
-    "LOG_SIGMA",
-    "STAR_METALLICITY",
-    "GAS_METALLICITY",
-    "SSFR",
-    "GAS_MASS",
-    "BH_MASS",
-]
-ang = {v: np.pi / 2 - 2 * np.pi * i / len(order) for i, v in enumerate(order)}
-pos = {v: (np.cos(ang[v]), np.sin(ang[v])) for v in order}
-fig, axes = plt.subplots(1, 3, figsize=(12.6, 4.5))
-R = 0.17
-for ax, (t, E) in zip(axes, graphs.items()):
-    ax.grid(False)
-    ax.axis("off")
-    ax.set_aspect("equal")
-    ax.set_xlim(-1.35, 1.35)
-    ax.set_ylim(-1.35, 1.35)
-    ax.set_title(f"{t}   ({len(E)} edges)", fontsize=11.5, color=style.CODES[t])
-    for a, m, b in E:
-        (x1, y1), (x2, y2) = pos[a], pos[b]
-        gold = "BH_MASS" in (a, b) and (
-            b in ("DM_MASS", "STELLAR_MASS", "LOG_SIGMA") or a in ("DM_MASS", "STELLAR_MASS", "LOG_SIGMA")
-        )
-        c = style.BH if gold else style.MUTE
-        lw = 2.4 if gold else 1.1
-        dx, dy = x2 - x1, y2 - y1
-        L = np.hypot(dx, dy)
-        ux, uy = dx / L, dy / L
-        sx, sy, ex, ey = x1 + ux * R, y1 + uy * R, x2 - ux * R, y2 - uy * R
-        head = "-|>" if m.endswith(">") else "-"
-        if m.startswith("<"):
-            head = "<|-" + ("|>" if m.endswith(">") else "")
-        ax.add_patch(
-            FancyArrowPatch(
-                (sx, sy),
-                (ex, ey),
-                arrowstyle=head,
-                mutation_scale=12,
-                color=c,
-                lw=lw,
-                zorder=2,
-                shrinkA=0,
-                shrinkB=0,
-            )
-        )
-        if m.startswith("o"):
-            ax.add_patch(Circle((sx, sy), 0.045, fc="white", ec=c, lw=1.2, zorder=3))
-        if m.endswith("o"):
-            ax.add_patch(Circle((ex, ey), 0.045, fc="white", ec=c, lw=1.2, zorder=3))
-    for v, (x, y) in pos.items():
-        ax.add_patch(Circle((x, y), R, fc="white", ec=node_col.get(v, style.STAR), lw=1.8, zorder=4))
-        ax.text(x, y, label[v], ha="center", va="center", fontsize=10, zorder=5)
-fig.text(
-    0.5,
-    0.01,
-    "Gold: edges joining the black hole to its host (halo, stellar mass or velocity dispersion). Circles: endpoint left undetermined by the search.",
-    ha="center",
-    fontsize=8.8,
-    color=style.MUTE,
-)
-fig.savefig(os.path.join(HERE, "results", "fig_pags.png"))
-fig.savefig(os.path.join(HERE, "results", "fig_pags.pdf"))
-print("-> fig_pags")
