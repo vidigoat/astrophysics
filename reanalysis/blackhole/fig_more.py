@@ -19,11 +19,10 @@ with contextlib.redirect_stdout(io.StringIO()):
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = os.path.join(ROOT, "paper", "Plots", "v3")
-PAL = {"TNG50": "#1B3D1B", "EAGLE": "#1A3A5C", "SIMBA": "#E65100"}
+PAL = {"TNG50": "#2ca02c", "EAGLE": "#1f77b4", "SIMBA": "#ff7f0e"}
 plt.rcParams.update(
     {
-        "font.family": "serif",
-        "font.serif": ["STIXGeneral", "Times New Roman", "DejaVu Serif"],
+        "font.family": "DejaVu Sans",
         "font.size": 10,
         "axes.labelsize": 10.5,
         "axes.titlesize": 11.5,
@@ -36,16 +35,16 @@ plt.rcParams.update(
         "ytick.major.size": 4,
         "xtick.minor.visible": False,
         "ytick.minor.visible": False,
-        "axes.edgecolor": "0.25",
-        "xtick.color": "0.2",
-        "ytick.color": "0.2",
+        "axes.edgecolor": "black",
+        "xtick.color": "black",
+        "ytick.color": "black",
         "axes.linewidth": 0.9,
         "axes.grid": False,
         "legend.frameon": False,
         "savefig.dpi": 300,
         "savefig.bbox": "tight",
         "savefig.facecolor": "white",
-        "mathtext.fontset": "stix",
+        "mathtext.fontset": "dejavusans",
     }
 )
 
@@ -162,7 +161,7 @@ fig.savefig(os.path.join(OUT, "fig3_plane.pdf"))
 print("-> fig3_plane")
 
 # ------------------------------------------------------------ Fig 3 (scatter + fit + predictions), Desmond-style
-PT = {"TNG50": "#2E7D32", "EAGLE": "#2E5F8C", "SIMBA": "#E65100"}
+PT = {"TNG50": "#2ca02c", "EAGLE": "#1f77b4", "SIMBA": "#ff7f0e"}
 from common import resid
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 4.3), sharey=True, gridspec_kw={"wspace": 0.06})
@@ -174,28 +173,16 @@ for k, (ax, (code, d)) in enumerate(zip(axes, D.items())):
     ax.scatter(x[sel], y[sel], s=5, color="0.45", alpha=0.35, lw=0, rasterized=True)
     b = np.polyfit(x, y, 1)
     xx = np.array([-0.85, 0.85])
-    ax.plot(
-        xx,
-        xx * 1.0,
-        ls="--",
-        color="#c0392b",
-        lw=1.3,
-        label=r"halo-regulated: $M_{\rm BH}\propto M_{\rm h}^{\,1}$ at fixed $M_\star$",
-    )
-    ax.plot(
-        xx,
-        xx * 0.0,
-        ls="--",
-        color="#4c72b0",
-        lw=1.3,
-        label=r"galaxy-regulated: $M_{\rm BH}\propto M_{\rm h}^{\,0}$ at fixed $M_\star$",
-    )
+    ax.plot(xx, xx * (5.0 / 3.0), ls="--", color="black", lw=1.1,
+            label=r"halo binding energy, $b=5/3$")
+    ax.plot(xx, xx * 0.0, ls=":", color="black", lw=1.1,
+            label=r"galaxy-regulated, $b=0$")
     ax.plot(xx, np.polyval(b, xx), color=PT[code], lw=2.6, label=f"fit  $b={b[0]:+.2f}$")
     ax.set_xlim(-0.85, 0.85)
     ax.set_ylim(-1.3, 1.3)
     ax.set_xlabel(r"$\Delta\log M_{\rm h}$ at fixed $M_\star$")
-    ax.text(0.03, 0.04, f'({"abc"[k]}) {code}', transform=ax.transAxes, fontsize=12, fontweight="bold")
-    ax.legend(loc="upper left", fontsize=8.6, handlelength=2.2)
+    ax.set_title(code, fontsize=12)
+    ax.legend(loc="upper left", fontsize=9, handlelength=2.2)
 axes[0].set_ylabel(r"$\Delta\log M_{\rm BH}$ at fixed $M_\star$")
 fig.savefig(os.path.join(OUT, "fig2_scatter.png"))
 fig.savefig(os.path.join(OUT, "fig2_scatter.pdf"))

@@ -28,15 +28,14 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = os.path.join(ROOT, "paper", "Plots", "v3")
 rng = np.random.default_rng(11)
 PAL = {
-    "TNG50": dict(fill=["#1B5E20", "#2E7D32", "#81C784"], edge="#1B3D1B", hist="#B8E0B8", scatter="#4A9D4E"),
-    "EAGLE": dict(fill=["#1A3A5C", "#2E5F8C", "#7EB0D4"], edge="#1A3A5C", hist="#B8D4F0", scatter="#5B9BD5"),
-    "SIMBA": dict(fill=["#BF360C", "#E65100", "#FFB74D"], edge="#E65100", hist="#FFE0B2", scatter="#F39C12"),
+    "TNG50": dict(fill=["#00441b", "#238b45", "#a1d99b"], edge="#238b45", hist="#c7e9c0", scatter="#238b45"),
+    "EAGLE": dict(fill=["#08306b", "#2171b5", "#9ecae1"], edge="#2171b5", hist="#c6dbef", scatter="#2171b5"),
+    "SIMBA": dict(fill=["#7f2704", "#d94801", "#fdae6b"], edge="#d94801", hist="#fdd0a2", scatter="#d94801"),
 }
 Q = (0.393, 0.865, 0.989)
 plt.rcParams.update(
     {
-        "font.family": "serif",
-        "font.serif": ["STIXGeneral", "Times New Roman", "DejaVu Serif"],
+        "font.family": "DejaVu Sans",
         "font.size": 10,
         "axes.labelsize": 10.5,
         "axes.titlesize": 11.5,
@@ -49,16 +48,16 @@ plt.rcParams.update(
         "ytick.major.size": 4,
         "xtick.minor.visible": False,
         "ytick.minor.visible": False,
-        "axes.edgecolor": "0.25",
-        "xtick.color": "0.2",
-        "ytick.color": "0.2",
+        "axes.edgecolor": "black",
+        "xtick.color": "black",
+        "ytick.color": "black",
         "axes.linewidth": 0.9,
         "axes.grid": False,
         "legend.frameon": False,
         "savefig.dpi": 300,
         "savefig.bbox": "tight",
         "savefig.facecolor": "white",
-        "mathtext.fontset": "stix",
+        "mathtext.fontset": "dejavusans",
     }
 )
 

@@ -1,0 +1,23 @@
+{
+  "title": "Conditional and causal analysis of the black hole-halo connection in cosmological simulations and observed galaxies",
+  "description": "<p>Analysis code accompanying the paper <em>Which mass sets the black hole? The halo takes over late</em> (V. Patankar). The code asks one conditional question of the IllustrisTNG, EAGLE and SIMBA simulations, of 140 observed galaxies with individually measured halo masses, and of two of the simulations at five redshifts: once the stellar mass of a galaxy is fixed, does the halo mass still set the mass of its central black hole?</p><p>It contains the conditional regressions and partial correlations, causal discovery with the FCIT algorithm through py-tetrad, the feedback-variation experiment on the public SIMBA runs, a forward model of each simulation through the real observational selection and errors, a Bayesian errors-in-variables fit to the observed samples, and a two-parameter population model of black-hole growth against a halo-set ceiling.</p>",
+  "upload_type": "software",
+  "license": "gpl-3.0-only",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Patankar, Vidit",
+      "affiliation": "Independent Researcher, India",
+      "orcid": "0009-0008-8379-6863"
+    }
+  ],
+  "keywords": [
+    "galaxy evolution",
+    "galaxy formation",
+    "supermassive black holes",
+    "hydrodynamical simulations",
+    "causal discovery",
+    "astrostatistics"
+  ],
+  "language": "eng"
+}

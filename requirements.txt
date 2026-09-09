@@ -1,0 +1,12 @@
+# Python dependencies for the analysis in reanalysis/blackhole/
+# Tested with Python 3.13 on macOS.  py-tetrad additionally requires a JVM (OpenJDK 21)
+# and graphviz requires the system `dot` binary.
+numpy>=1.26
+scipy>=1.11
+pandas>=2.0
+matplotlib>=3.8
+h5py>=3.10
+graphviz>=0.20
+pillow>=10.0
+py-tetrad>=0.3
+JPype1>=1.5

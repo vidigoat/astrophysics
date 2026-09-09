@@ -1,56 +1,82 @@
-# Causal Structure in Galaxies
+# Which mass sets the black hole? The halo takes over late
 
-Analysis code for causal-discovery experiments on galaxy catalogues and cosmological
-simulations, using the FCIT algorithm (Fast Causal Inference with Targeted Testing)
-via the `py-tetrad` interface to Tetrad.
+Analysis code for the paper of that title (V. Patankar), which asks one conditional
+question of three cosmological simulations, of 140 real galaxies with measured halo
+masses, and of two of the simulations at five epochs: **once the stellar mass of a galaxy
+is fixed, does the halo mass still set the mass of its central black hole?**
 
-Five data sets are processed: two observational catalogues (the NASA--Sloan Atlas and
-the gas-selected ALFALFA x NSA matched sample) and three cosmological simulations
-(TNG50, EAGLE and SIMBA). Each is reduced to a common set of first-order galaxy
-properties, run through FCIT to recover a partial ancestral graph, and compared
-across codes on a matched variable set.
+Causal structure is recovered with the FCIT algorithm (Fast Causal Inference with
+Targeted testing) through the `py-tetrad` interface to Tetrad; the physical conclusions
+rest on ordinary conditional regressions and partial correlations, which do not depend on
+the graph orientation rules.
+
+## Where the paper's numbers come from
+
+Every quantity quoted in the paper is produced by one of these scripts. Run them from
+`reanalysis/blackhole/`; each writes a CSV into `results/`.
+
+| Script | Produces |
+|---|---|
+| `headline.py` | The z=0 conditional fits for the three codes, split by star-formation state (Sect. 5, Table 2) |
+| `fcit_z0.py` | The z=0 causal graphs, the penalty scan and the disjoint-halves null (Sect. 5.1) |
+| `simba_variants.py` | The feedback experiment on the five public SIMBA variation runs (Sect. 5.2) |
+| `fcit_temporal.py` | The time-tiered causal search on EAGLE merger trees (Sect. 5.4) |
+| `obs_conditional.py` | The conditional test on the two real samples, and the forward model of each simulation through the real selection and errors (Sect. 6, Table 3) |
+| `obs_eiv.py` | The Bayesian errors-in-variables fit to the real samples (Sect. 6) |
+| `time_evolution.py` | The conditional fit at five epochs, with the routing share (Sect. 7, Table 4) |
+| `ceiling.py` | The upper envelope at fixed halo mass, its drift with redshift, and the arrival fractions along EAGLE main branches (Sect. 8.1) |
+| `routing_model.py` | The two-parameter population model of growth against a halo ceiling (Sect. 8.2) |
+| `make_numbers.py` | Collects the above into `results/numbers.tex` |
+
+Figures: `fig_clean.py` (Fig. 1), `compose_pags.py` (Fig. 2), `fig_more.py` (Figs. 3 and 4),
+`render_pags_gv.py` (Fig. 5), `fig_new.py` (Figs. 6, 7 and 8).
+
+Not used in the final paper, kept because they were run: `forecast.py` (an observational
+forecast, superseded by the real-data test), `threshold.py` (broken-slope fits) and
+`ceiling_model.py` (a cooling-radius ceiling model that does not reproduce the measured
+envelope slope).
+
+## Getting the data
+
+None of the input data are redistributed here except the two published observational
+tables, which are small and are needed to reproduce the central result.
+
+| Source | How to obtain it |
+|---|---|
+| IllustrisTNG (TNG50-1) | <https://www.tng-project.org>, z=0 group catalogue |
+| EAGLE | Public database <http://virgodb.dur.ac.uk:8080/Eagle/> (McAlpine et al. 2016). `pull_eagle.py`, `pull_eagle_snaps.py` and `pull_eagle_temporal.py` issue the queries and need a login in `Data/virgodb_auth` (two lines: user, password) |
+| SIMBA | <http://simba.roe.ac.uk>: the `m100n1024` flagship and the five `m50n512` feedback-variation runs, into `Data/simba_variants/` |
+| Marasco et al. (2021), 55 galaxies | `reanalysis/blackhole/data_obs/marasco2021.csv`, parsed from the arXiv source of 2105.10508 |
+| Gaspari et al. (2019), 85 galaxies | `reanalysis/blackhole/data_obs/gaspari2019.csv`, parsed from the arXiv source of 1904.10972 |
+
+Definitions are made consistent before anything is compared. Black-hole mass is the
+subgrid mass in every code; EAGLE's particle mass `MassType_BH` is floored at the
+gas-particle mass and is not the black-hole mass. Halo mass is `M200c` for EAGLE and
+SIMBA and the subhalo dark-matter mass for TNG50. Black holes are seeded above a halo-mass
+threshold, so unseeded objects sit at the catalogue floor and are excluded throughout;
+keeping them makes TNG50 falsely resemble EAGLE.
+
+## Requirements
+
+Python 3.11 or later and a JVM for Tetrad. See `requirements.txt`; `graphviz` also needs
+the system `dot` binary.
 
 ## Layout
 
 | Path | Contents |
 |---|---|
-| `Code/DataPrep/` | Catalogue ingestion and cleaning, one script per data set |
-| `Code/FCIT/` | FCIT runs on the per-catalogue variable sets |
-| `Code/Analysis/` | Hyperparameter tuning, null tests, robustness checks |
-| `Code/Visualizations/` | Corner plots and PAG rendering |
-| `reanalysis/` | Corrected data extraction, conditional-independence tests and cross-code comparison on the matched variable set |
-| `reanalysis/blackhole/` | The black-hole analysis: conditional regressions, SIMBA feedback-variation runs, EAGLE heating-temperature and merger-tree pulls, time-tiered FCIT, observational forecast, and the paper figures |
+| `reanalysis/blackhole/` | The analysis for this paper |
+| `reanalysis/blackhole/data_obs/` | The two published observational tables |
+| `archive/nsa_alfalfa_2025/` | An earlier, separate study of causal structure in the NASA-Sloan Atlas and an ALFALFA cross-match. Not part of this paper |
+| `archive/exploratory/` | Earlier exploratory scripts, superseded by `reanalysis/blackhole/` |
 
-Outputs (data pulls, recovered graphs, figures) are regenerated by the scripts and are not tracked.
-
-## Notes on the data
-
-Raw survey and simulation pulls are not tracked (see `.gitignore`); each `DataPrep`
-script fetches or reads from its public source. The ALFALFA x NSA cross-match is not
-redistributed here and can be rebuilt following Stiskalek et al. (2021).
-
-Two corrections in `reanalysis/` supersede the earlier `Code/` outputs. The
-IllustrisTNG `SubhaloMassType` particle-type indices are `0 = gas`, `1 = dark matter`,
-`4 = stars`; and `SubhaloStellarPhotometrics` is ordered `U, B, V, K, g, r, i, z`, so
-index 2 is Buser `V` rather than SDSS `r`. Black-hole mass is censored in TNG50 and
-SIMBA (unseeded objects sit at the catalogue floor) and is restricted to seeded
-galaxies throughout; EAGLE black-hole masses are the subgrid `BlackHoleMass`, not the
-particle mass `MassType_BH`.
-
-The EAGLE pulls in `reanalysis/blackhole/pull_eagle*.py` need a VirgoDB login stored
-in `Data/virgodb_auth` (two lines: user, password). The SIMBA variation catalogues
-(`m50n512` s50 / nox / nojet / noagn / nofb) are downloaded from `simba.roe.ac.uk`
-into `Data/simba_variants/`.
-
-## Requirements
-
-Python 3.11+, with `py-tetrad` (and a JVM), `numpy`, `scipy`, `pandas`, `matplotlib`,
-`h5py` and `graphviz`.
+Outputs (`results/`, `data/`, figures) are regenerated by the scripts and are not tracked.
 
 ## License
 
 GNU General Public License v3.0 — see [LICENSE](LICENSE).
 
-## Contact
+## Author
 
-Vidit Patankar — vidit.patankar16@gmail.com
+Vidit Patankar, Independent Researcher, India.
+ORCID [0009-0008-8379-6863](https://orcid.org/0009-0008-8379-6863) — vidit.patankar16@gmail.com
