@@ -4,6 +4,15 @@ Model: true (x1, x2) ~ bivariate normal (mean mu, covariance S); observed xi_obs
 y_obs = a x1 + b x2 + c + N(0, sqrt(s_int^2 + e_y^2)).  The latent x are marginalised analytically
 (Gaussian), so the likelihood is a 3-d Gaussian per object; parameters (a, b, c, s_int, mu, S) are
 sampled with a simple adaptive Metropolis chain.  Reports posterior medians and 68% intervals.
+
+Run with the default 60000 steps or more.  A short chain has not converged and returns a
+halo exponent biased low; the values quoted in the paper are from 60000 steps.
+
+For the Gaspari sample the posterior is well constrained.  For the Marasco sample the
+stellar and halo masses come from the same rotation-curve data (r = 0.79), so only the sum
+a + b is constrained, to about 1.2-1.4; the chain wanders along that degeneracy and the
+individual a and b should not be quoted, though b > 0.5 throughout.  Sect. 6 of the paper
+uses a simulation-extrapolation de-attenuation for that sample instead.
 """
 import csv, sys, os
 import numpy as np
@@ -70,7 +79,7 @@ def run(y, x1, x2, ey, e1, e2, nstep=30000, seed=0):
 
 if __name__ == '__main__':
     for name, data in [('Marasco 2021 (55)', load_marasco()), ('Gaspari 2019 non-BCG (56)', load_gaspari(True)), ('Gaspari 2019 all (85)', load_gaspari(False))]:
-        ch, acc = run(*data, nstep=int(sys.argv[1]) if len(sys.argv) > 1 else 30000)
+        ch, acc = run(*data, nstep=int(sys.argv[1]) if len(sys.argv) > 1 else 60000)
         a, b, c, ls = ch[:, 0], ch[:, 1], ch[:, 2], ch[:, 3]
         q = lambda v: (np.median(v), np.percentile(v, 16), np.percentile(v, 84))
         print(f'{name:28s} acc={acc:.2f}  a = {q(a)[0]:+.2f} [{q(a)[1]:+.2f},{q(a)[2]:+.2f}]   b = {q(b)[0]:+.2f} [{q(b)[1]:+.2f},{q(b)[2]:+.2f}]   '
