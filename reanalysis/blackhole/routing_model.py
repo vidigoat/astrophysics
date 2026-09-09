@@ -3,6 +3,9 @@
 Haloes: z=0 masses log-uniform in [11.3, 14.0] (N=6000); mean growth histories integrated backwards
 with the Fakhouri, Ma & Boylan-Kolchin (2010) mean accretion rate.
 Galaxies: M*(M_h, z) from Moster et al. (2013) with 0.2 dex lognormal scatter (fixed per halo).
+  Moster's slope in the analysis window swings from 0.6 at z=0 to 1.2 at z=3, which by itself
+  drives the total slope T.  The paper therefore uses SHMR_SLOPE = 0.88, EAGLE's measured value,
+  pinned to Moster's normalisation at 1e12 at each epoch; set SHMR_SLOPE = None for plain Moster.
 Black holes: seeded at 1e5 Msun when M* first exceeds 10^9.3.  Growth law (supply-limited):
     dM_BH/dt = A * M_BH^p * SFR-proxy      with SFR-proxy = dM*/dt
   p = 1 gives Bondi-like runaway in a growing galaxy (M_BH ∝ M*^2 in the unregulated regime).
@@ -15,9 +18,13 @@ Om,OL,h=0.307,0.693,0.6777
 E=lambda z: np.sqrt(Om*(1+z)**3+OL)
 def tH_gyr(z):   # lookback-free cosmic time: t(z) in Gyr (flat LCDM analytic)
     return 2/(3*np.sqrt(OL))*np.arcsinh(np.sqrt(OL/Om)*(1+z)**-1.5)/(h*100/978.0)  # 1/H0 = 978/h Gyr
-def moster(Mh,z):
+SHMR_SLOPE=0.88          # EAGLE's measured d log M* / d log M200 in the window; None -> plain Moster
+def moster_raw(Mh,z):
     x=z/(1+z); N=0.0351-0.0247*x; M1=10**(11.590+1.195*x); be=1.376-0.826*x; ga=0.608+0.329*x
     return Mh*2*N/((Mh/M1)**-be+(Mh/M1)**ga)
+def moster(Mh,z):
+    if SHMR_SLOPE is None: return moster_raw(Mh,z)
+    return moster_raw(1e12,z)*(Mh/1e12)**SHMR_SLOPE
 def dMdt(M,z):   # Fakhouri+10 mean, Msun/yr
     return 46.1*(M/1e12)**1.1*(1+1.11*z)*E(z)
 def run(K=None,beta=5/3,k=2/3,galaxy_ceiling=False,Kg=None,betag=1.0,A=None,p=1.0,seed=0,N=6000,zmax=6.0,nz=400):
@@ -59,15 +66,14 @@ def run(K=None,beta=5/3,k=2/3,galaxy_ceiling=False,Kg=None,betag=1.0,A=None,p=1.
                 out[round(z,2)]=(c[1],c[2],T,frac,w.sum())
     return out
 if __name__=='__main__':
-    # halo ceiling normalised so that M_BH ~ 10^8 at M_h=10^12.5, z=0:  K = 1e8 / (10^12.5)^(5/3)
+    # Ceiling normalised to pass through M_BH = 1e8 at M_h = 10^12.5 today.
     K=1e8/(10**12.5)**(5/3)
-    print("HALO ceiling (beta=5/3, k=2/3), Bondi-like growth p=1")
-    for A in [2.0,6.0]:
-        out=run(K=K,A=A)
-        print(f" A={A}: "+" | ".join(f"z={z}: a={v[0]:+.2f} b={v[1]:+.2f} T={v[2]:.2f} arrived={v[3]:.2f}" for z,v in sorted(out.items())))
-    print("GALAXY ceiling (M_ceil = 1e-3 M*), same growth")
-    out=run(galaxy_ceiling=True,Kg=1e-3,betag=1.0,A=6.0)
-    print("        "+" | ".join(f"z={z}: a={v[0]:+.2f} b={v[1]:+.2f} T={v[2]:.2f} arrived={v[3]:.2f}" for z,v in sorted(out.items())))
-    print("HALO ceiling, k=0 (no E(z) evolution)")
-    out=run(K=K,k=0.0,A=6.0)
-    print("        "+" | ".join(f"z={z}: a={v[0]:+.2f} b={v[1]:+.2f} T={v[2]:.2f} arrived={v[3]:.2f}" for z,v in sorted(out.items())))
+    fmt=lambda out: " | ".join(f"z={z:.1f}: a={v[0]:+.2f} b={v[1]:+.2f} T={v[2]:.2f} f={v[3]:.2f}"
+                               for z,v in sorted(out.items()))
+    print("Sect. 8.2: halo ceiling M_ceil = K M_h^(5/3) E(z)^(2/3), growth dM_BH = A M_BH^(1/2) dM*")
+    print("  (an unregulated black hole then grows as M*^2, which is what both codes show at z=3)\n")
+    print(f"  A=4e3  (the paper's fiducial, EAGLE-like)\n    {fmt(run(K=K,A=4e3,p=0.5))}")
+    print(f"  A=6e3  (faster growth, earlier arrival)\n    {fmt(run(K=K,A=6e3,p=0.5))}")
+    print(f"  A=3e3  (slower growth, later arrival)\n    {fmt(run(K=K,A=3e3,p=0.5))}")
+    print("\n  galaxy ceiling instead of a halo one (M_ceil proportional to M*): b stays near zero, as in TNG50")
+    print(f"    {fmt(run(galaxy_ceiling=True,Kg=1e-3,betag=1.0,A=4e3,p=0.5))}")
