@@ -27,20 +27,30 @@ ML_K = 0.75                 # K-band mass-to-light ratio
 
 
 def marasco():
+    """Marasco's stellar mass is f_star x f_b x M_h, so its error is not independent of
+    the halo error; the independent part is what is left after the halo term is removed,
+    floored at 0.10 dex.  This is the same decomposition obs_eiv.py uses."""
     R = list(csv.DictReader(open(os.path.join(OBS, "marasco2021.csv"))))
     g = lambda k: np.array([float(r[k]) for r in R])
+    e_mh = g("e_logMh")
+    e_ms = np.sqrt(np.maximum(g("e_logfstar") ** 2 - e_mh ** 2, 0.10 ** 2))
     return dict(bh=g("logMBH"), ms=g("logMstar"), mh=g("logMh"), e_bh=g("e_logMBH"),
-                e_mh=g("e_logMh"), late=g("ttype") > 0, name="Marasco et al. (2021)")
+                e_mh=e_mh, e_ms=e_ms, late=g("ttype") > 0, name="Marasco et al. (2021)")
 
 
-def gaspari(m200=True):
+def gaspari(m200=True, sigma_ML=0.15):
+    """Gaspari's stellar mass is the K-band luminosity times a single mass-to-light ratio,
+    so its error is the quoted luminosity error added in quadrature to the scatter in that
+    ratio, sigma_ML.  It is independent of the X-ray halo mass."""
     G = list(csv.DictReader(open(os.path.join(OBS, "gaspari2019.csv"))))
     g = lambda k: np.array([float(r[k]) for r in G])
     mh = g("logM500") + (np.log10(M500_TO_M200) if m200 else 0.0)
     bcg = np.array([r["central"].startswith(("BCG", "BGG")) for r in G])
+    e_ms = np.sqrt(g("e_logLK") ** 2 + sigma_ML ** 2)
     return dict(bh=g("logMBH"), ms=g("logLK") + np.log10(ML_K), mh=mh, sig=g("logsig"),
                 mbulge=g("logMbulge"), e_bh=g("e_logMBH"),
-                e_mh=np.maximum(1.5 * g("e_logTxc"), 0.10), bcg=bcg, name="Gaspari et al. (2019)")
+                e_mh=np.maximum(1.5 * g("e_logTxc"), 0.10), e_ms=e_ms, bcg=bcg,
+                name="Gaspari et al. (2019)")
 
 
 def chain_ratio(bh, ms, mh):
@@ -59,15 +69,21 @@ def fit(lab, bh, ms, mh, rows):
     return a, b
 
 
-def forward(obs, sims, tol=0.15, n=3000, seed=7):
+def forward(obs, sims, extra_ms=0.0, tol=0.15, n=3000, seed=7):
     """Push each simulation through the real selection.
 
     For every real galaxy, simulated centrals within `tol` dex of its stellar mass form a
-    pool; one is drawn, the galaxy's own quoted errors are added to log M_BH and log M_h,
-    and the conditional fit is repeated.  Real galaxies with no analogue in a given box are
-    dropped for that code, and the observed exponent is recomputed on the same subset, so
-    the comparison is like for like.  Returns the median forward exponent, its 16-84 range,
-    and the fraction of draws that reach the observed value.
+    pool; one is drawn, the galaxy's own quoted errors are added to log M_BH, log M_h AND
+    log M*, and the conditional fit is repeated.  Perturbing the stellar mass matters: noise
+    in a regressor attenuates its own coefficient and shifts weight onto the other, which is
+    exactly the comparison being made, so omitting it biases the test in the paper's favour.
+    `extra_ms` adds a further systematic to the stellar mass in quadrature, for the
+    sensitivity sweep.
+
+    Real galaxies with no analogue in a given box are dropped for that code and the observed
+    exponent recomputed on the same subset, so the comparison is like for like.  With zero
+    successes in n draws the probability is reported as the rule-of-three bound, P < 3/n,
+    rather than as 1/n.
     """
     rng = np.random.default_rng(seed)
     out = {}
@@ -76,22 +92,29 @@ def forward(obs, sims, tol=0.15, n=3000, seed=7):
         pool = [np.where(np.abs(MS - m) < tol)[0] for m in obs["ms"]]
         keep = np.array([len(p) > 0 for p in pool])
         pool = [p for p, k in zip(pool, keep) if k]
-        ms_o, e_bh, e_mh = obs["ms"][keep], obs["e_bh"][keep], obs["e_mh"][keep]
-        b_obs = ols(obs["bh"][keep], ms_o, obs["mh"][keep])[0][1]
-        bs = np.empty(n); bs0 = np.empty(n)
+        e_bh, e_mh = obs["e_bh"][keep], obs["e_mh"][keep]
+        e_ms = np.sqrt(obs["e_ms"][keep] ** 2 + extra_ms ** 2)
+        b_obs, a_obs = ols(obs["bh"][keep], obs["ms"][keep], obs["mh"][keep])[0][::-1]
+        bs = np.empty(n); as_ = np.empty(n); bs0 = np.empty(n)
         for i in range(n):
             k = np.array([p[rng.integers(len(p))] for p in pool])
-            bs0[i] = ols(BH[k], MS[k], MH[k])[0][1]                      # no errors: intrinsic at these masses
-            bs[i] = ols(BH[k] + rng.normal(0, e_bh), MS[k], MH[k] + rng.normal(0, e_mh))[0][1]
-        p = float(np.mean(bs >= b_obs))
+            bs0[i] = ols(BH[k], MS[k], MH[k])[0][1]
+            (a, b), _ = ols(BH[k] + rng.normal(0, e_bh),
+                            MS[k] + rng.normal(0, e_ms),
+                            MH[k] + rng.normal(0, e_mh))
+            as_[i] = a; bs[i] = b
+        nsucc = int(np.sum(bs >= b_obs))
+        p = nsucc / n
+        plab = f"<{3.0/n:.0e}" if nsucc == 0 else f"{p:.4f}"
         lo, hi = np.percentile(bs, [16, 84])
-        out[code] = dict(N_used=int(keep.sum()), N_total=int(len(keep)), b_obs=b_obs,
+        out[code] = dict(N_used=int(keep.sum()), N_total=int(len(keep)), b_obs=b_obs, a_obs=a_obs,
                          b_intrinsic_at_these_masses=float(np.median(bs0)),
-                         b_fwd=float(np.median(bs)), lo=lo, hi=hi, P=p)
-        drop = "" if keep.all() else f"  ({(~keep).sum()} of {len(keep)} real galaxies have no analogue in this box)"
-        print(f"    {code:6s} N={keep.sum():3d}  b_obs={b_obs:+.2f} | sim at these masses: "
-              f"b_intrinsic={np.median(bs0):+.2f} -> b_with_errors={np.median(bs):+.2f} "
-              f"[{lo:+.2f},{hi:+.2f}]  P={'<3e-4' if p==0 else f'{p:.4f}'}{drop}")
+                         b_fwd=float(np.median(bs)), a_fwd=float(np.median(as_)),
+                         lo=lo, hi=hi, n_success=nsucc, n_draws=n, P=p, extra_ms=extra_ms)
+        drop = "" if keep.all() else f"  ({(~keep).sum()} of {len(keep)} dropped: no analogue)"
+        print(f"    {code:6s} N={keep.sum():3d}  b_obs={b_obs:+.2f} a_obs={a_obs:+.2f} | "
+              f"b: {np.median(bs0):+.2f} intrinsic -> {np.median(bs):+.2f} [{lo:+.2f},{hi:+.2f}]   "
+              f"a_fwd={np.median(as_):+.2f}   P={plab} ({nsucc}/{n}){drop}")
     return out
 
 
@@ -122,9 +145,12 @@ if __name__ == "__main__":
     Gn = {k2: (v[k] if isinstance(v, np.ndarray) and v.shape == G["bh"].shape else v) for k2, v in G.items()}
     fwd_rows = []
     for lab, obs in [("Marasco", M), ("Gaspari non-central", Gn)]:
-        print(f"  vs {lab}:")
-        for code, r in forward(obs, sims).items():
-            fwd_rows.append(dict(sample=lab, code=code, **r))
+        for extra in (0.0, 0.10, 0.20):
+            print(f"  vs {lab}, extra stellar-mass systematic {extra:.2f} dex "
+                  f"(median total {np.median(np.sqrt(obs['e_ms']**2+extra**2)):.2f} dex):")
+            for code, r in forward(obs, sims, extra_ms=extra).items():
+                fwd_rows.append(dict(sample=lab, code=code, **r))
+        print()
     with open(os.path.join(OUT, "obs_forward.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(fwd_rows[0])); w.writeheader(); w.writerows(fwd_rows)
     print(f"-> {os.path.join(OUT,'obs_forward.csv')}")

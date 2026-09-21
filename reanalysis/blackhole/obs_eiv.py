@@ -3,7 +3,7 @@
 Model: true (x1, x2) ~ bivariate normal (mean mu, covariance S); observed xi_obs = xi + N(0, e_xi);
 y_obs = a x1 + b x2 + c + N(0, sqrt(s_int^2 + e_y^2)).  The latent x are marginalised analytically
 (Gaussian), so the likelihood is a 3-d Gaussian per object; parameters (a, b, c, s_int, mu, S) are
-sampled with a simple adaptive Metropolis chain.  Reports posterior medians and 68% intervals.
+sampled with a random-walk Metropolis chain using fixed proposal widths.  Reports posterior medians and 68% intervals.
 
 Run with the default 60000 steps or more.  A short chain has not converged and returns a
 halo exponent biased low; the values quoted in the paper are from 60000 steps.
@@ -61,7 +61,7 @@ def loglike(p, y, x1, x2, ey, e1, e2):
     return ll
 
 
-def run(y, x1, x2, ey, e1, e2, nstep=30000, seed=0):
+def run(y, x1, x2, ey, e1, e2, nstep=60000, seed=0):
     rng = np.random.default_rng(seed)
     # init from OLS
     X = np.column_stack([np.ones(len(y)), x1, x2]); beta = np.linalg.lstsq(X, y, rcond=None)[0]

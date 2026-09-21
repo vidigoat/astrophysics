@@ -48,7 +48,6 @@ def run(K=None,beta=5/3,k=2/3,galaxy_ceiling=False,Kg=None,betag=1.0,A=None,p=1.
     for j,i in enumerate(order):
         z=zgrid[i]; Mh=Mback[i]; Ms=moster(Mh,z)*10**scat
         if Msprev is None: Msprev=Ms; continue
-        dt=(tH_gyr(zgrid[order[j-1]])-tH_gyr(z))*1e9
         dMs=np.maximum(Ms-Msprev,0)
         new=(~seeded)&(Ms>10**9.3); Mbh[new]=1e5; seeded|=new
         g=seeded
